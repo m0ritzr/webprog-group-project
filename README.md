@@ -8,7 +8,7 @@ Group Project for Web Programming 2023
 
 - Clone the repo
 - first time (run `npm install`)
-- run `vercel dev` to deploy locally
+- run `npm start` to deploy locally
 
 ## Branching
 
