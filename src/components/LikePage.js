@@ -15,58 +15,50 @@ import { fetchAnimalTypes, fetchAnimals } from "../petfinder";
 function LikePage() {
   // eslint-disable-next-line no-unused-vars
   const { settings, setSettings, matches, setMatches } = useData();
-  const [petImg, setPetImg] = useState(""); 
+
+  const [pets, setPets] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1) // Needs improvement
 
   const petPref = settings.petPreference ? settings.petPreference : "Dog";
 
 
-  async function handleLikeClick() {
+  function handleLikeClick() {
     addToMatches()
-    const pet = getNewPet()
+    const newPetList = getUpdatedList()
+    fillListWithPets(newPetList)
+  }
+
+  function getUpdatedList() {
+    return [...pets.slice(1, pets.length)]
   }
 
   function handleDislikeClick() {
-    const pet = getNewPet()
+    //const pet = getNewPet()
   }
 
   function addToMatches() {
     console.log("Add to matches")
   }
 
-  //TODO
-  /*
-  function fillListWithPets() {
+  //TODO, needs better implementaion
+  async function fillListWithPets(pets) {
+    console.log("fill list")
 
-    let p = 10;
-    while(p < 15) {
-      const animals = await fetchAnimals({type:"Dog", page:p})
-      let animalsWithPhotos = animals.animals.filter((animal) => animal.photos.length !== 0)
-      setPetImgs([...petImgs, ...animalsWithPhotos])
-      console.log([...petImgs, ...animalsWithPhotos])
-      p += 1;
-    }
-  }
-  */
-
-  async function getNewPet() {
-    // Only changes photo at the moment 
-    // Fetches a page of animals, filters out those without photos, displays the first one with a photo
-    // Doesnt display others on the page, just goes to next page, needs fix
-    // Doesnt save page
-    let animalsWithPhotos = [];
-    let img;
-    let p = currentPage;
-    while(animalsWithPhotos.length === 0) {
-      const animals = await fetchAnimals({type:petPref, page:p})
+    let tmpArr = [...pets]
+    while(tmpArr.length < 15) {
+      let animalsWithPhotos = null;
+      const animals = await fetchAnimals({type:petPref, page:currentPage})
+      setCurrentPage(currentPage + 1)
       animalsWithPhotos = animals.animals.filter((animal) => animal.photos.length !== 0)
-      p += 1;
+      if(animalsWithPhotos.length === 0) {
+        console.log(animals)
+        throw new Error("AAA")
+      }
+      tmpArr = [...tmpArr, ...animalsWithPhotos]
+      console.log(tmpArr)
     }
-    setCurrentPage(p)
-    img = animalsWithPhotos[0].photos[0].large // This might break
-    setPetImg(img)
-    return null
+    setPets([...tmpArr])
   }
 
   // TODO, make height fit the screen
@@ -75,7 +67,7 @@ function LikePage() {
     <div className="container-sm p-3">
       <h2>Like Pets</h2>
       <Card className="">
-        <Card.Img className="object-fit-scale" variant="top" src={petImg} />
+        <Card.Img className="object-fit-scale" variant="top" src={pets[0] ? pets[0].photos[0].large : "" /** can break if there are no large photos */} />
         <Card.Body>
           <Card.Title>Pet Name</Card.Title>
           <Card.Text>Pet Details</Card.Text>
