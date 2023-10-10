@@ -25,6 +25,7 @@ export async function fetchAnimal(id) {
     return await fetchFromCloudFunction('https://fetchanimal-m65pqwyajq-uc.a.run.app', { id });
 }
 
+// accepted params: type, breed, size, gender, age, color, location, distance, page (results are paginated) 
 export async function fetchAnimals(params) {
     return await fetchFromCloudFunction('https://fetchanimals-m65pqwyajq-uc.a.run.app', params);
 }
