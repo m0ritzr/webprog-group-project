@@ -5,7 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { DataProvider } from "./dataContext";
-import app from "./firebase";
+import { app } from "./firebase";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -2,29 +2,30 @@ import React from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
 import { useEffect } from "react";
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
-import app from '../firebase';
-
-const db = getFirestore(app);
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { fetchAnimalTypes } from "../petfinder";
 
 function SettingsPage() {
   const { settings, setSettings, uid } = useData();
-
+  
   useEffect(() => {
     if (uid) { 
-        const docRef = doc(db, 'settings', uid); 
-        
-        getDoc(docRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                setSettings(docSnap.data());
-            } else {
-                console.log("No settings found for user");
-            }
-        }).catch((error) => {
-            console.log("Error fetching settings:", error);
-        });
+      const docRef = doc(db, 'settings', uid); 
+      
+      getDoc(docRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          setSettings(docSnap.data());
+        } else {
+          console.log("No settings found for user");
+        }
+      }).catch((error) => {
+        console.log("Error fetching settings:", error);
+      });
     }
-  }, [uid, setSettings]); 
+
+  }, [uid, setSettings]);
+  
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
