@@ -10,20 +10,18 @@ function App() {
   const navigation = useNavigation();
 
   if (!isLoggedIn) {
-      return <Login />;
+    return <Login />;
   }
 
   const isLoading = navigation.state === "loading";
 
   return (
-        <div className="d-flex">
-          <div style={{ flex: "0 0 20%" }}>
-            <Sidebar />
-          </div>
-          <div style={{ flex: "1" }}>
-            {isLoading ? <Spinner /> : <Outlet />}
-          </div>
-        </div>
+    <div className="d-flex">
+      <div style={{ flex: "0 0 20%" }}>
+        <Sidebar />
+      </div>
+      <div style={{ flex: "1" }}>{isLoading ? <Spinner /> : <Outlet />}</div>
+    </div>
   );
 }
 

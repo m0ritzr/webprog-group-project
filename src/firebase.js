@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth'
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "webprog-group-project",
   storageBucket: "webprog-group-project.appspot.com",
   messagingSenderId: "953057927440",
-  appId: "1:953057927440:web:6cd68f7cf4d295400b8595"
+  appId: "1:953057927440:web:6cd68f7cf4d295400b8595",
 };
 
 export const app = initializeApp(firebaseConfig);
