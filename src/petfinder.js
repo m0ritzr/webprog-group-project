@@ -31,7 +31,7 @@ export async function fetchAnimals(params) {
 }
 
 export async function fetchAnimalTypes() {
-    return await fetchFromCloudFunction('https://fetchanimaltypes-m65pqwyajq-uc.a.run.app');
+    return await fetchFromCloudFunction('https://fetchanimaltypes-m65pqwyajq-uc.a.run.app'); 
 }
 
 export async function fetchAnimalBreeds(type) {

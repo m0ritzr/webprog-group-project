@@ -4,12 +4,22 @@ import { useData } from "../dataContext";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { fetchAnimalTypes } from "../petfinder";
+import { propTypes } from "react-bootstrap/esm/Image";
+import { fetchAnimalTypes, fetchAnimal } from "../petfinder";
 
 function SettingsPage() {
   const { settings, setSettings, uid } = useData();
 
-  const { petFilters, setPetFilters } = useState({});
+  const [ petFilters, setPetFilters ] = useState({});
+
+  const animalTypes = fetchAnimalTypes();
+
+  const animal = fetchAnimal("59904220");
+
+
+  console.log((animalTypes));
+
+  console.log(JSON.stringify(animal));
 
   useEffect(() => {
     if (uid) {
@@ -51,6 +61,7 @@ function SettingsPage() {
           <Form onSubmit={handleFormSubmit}>
 
   
+
             <SelectButtons
               groupId="petType"
               label="Type of Pet"
@@ -59,22 +70,98 @@ function SettingsPage() {
               onChange={e => setPetFilters(
                 {
                   ...petFilters,
-                  [e.target.itemProp]: { [e.target.name]: (petFilters[e.target.name] ? (!petFilters[e.target.name]) : false) }
+                  ["petType"]: { 
+                    ...petFilters["petType"],
+                    [e.target.name]: e.target.checked  }
                 }
               )
               } />
+
             <SelectButtons
-              groupId="gender"
-              label="Type of Pet"
+              groupId="breed"
+              label="Breed"
               settings={settings}
-              options={["Female", "Male"]}
+              options={["breed1", "breed2"]}
               onChange={e => setPetFilters(
                 {
                   ...petFilters,
-                  [e.target.itemProp]: { [e.target.name]: e.target.checked }
+                  ["Breed"]: {
+                    ...petFilters["Breed"],
+                    [e.target.name]: e.target.checked
+                  }
                 }
               )
               } />
+
+
+            <SelectButtons
+              groupId="age"
+              label="age"
+              settings={settings}
+              options={["young", "adult"]}
+              onChange={e => setPetFilters(
+                {
+                  ...petFilters,
+                  ["age"]: {
+                    ...petFilters["age"],
+                    [e.target.name]: e.target.checked
+                  }
+                }
+              )
+              } />
+
+            <SelectButtons
+              groupId="attributes"
+              label="attributes"
+              settings={settings}
+              options={["spayed_neutered", "house_trained", "special_needs", "shots_current"]}
+              onChange={e => setPetFilters(
+                {
+                  ...petFilters,
+                  ["attributes"]: {
+                    ...petFilters["attributes"],
+                    [e.target.name]: e.target.checked
+                  }
+                }
+              )
+              } />
+
+           
+
+            <SelectButtons
+              groupId="enviroment"
+              label="Enviroment"
+              settings={settings}
+              options={["childrens", "dogs", "cats" ]}
+              onChange={e => setPetFilters(
+                {
+                  ...petFilters,
+                  ["breed"]: {
+                    ...petFilters["B´breed"],
+                    [e.target.name]: e.target.checked
+                  }
+                }
+              )
+              } />
+
+
+            <SelectButtons
+              groupId="tags"
+              label="Tags"
+              settings={settings}
+              options={["Cute", "Intelligent", "Large", "Playful", "Happy", "Affectionate"]}
+              onChange={e => setPetFilters(
+                {
+                  ...petFilters,
+                  ["breed"]: {
+                    ...petFilters["B´breed"],
+                    [e.target.name]: e.target.checked
+                  }
+                }
+              )
+              } />
+
+         
 
             <Form.Group controlId="petType">
               <Form.Label>Type of Pet</Form.Label>
@@ -99,7 +186,7 @@ function SettingsPage() {
 export default SettingsPage;
 
 
-function SelectButtons({groupId, label, settings, options}) {
+function SelectButtons({ groupId, label, settings, options, onChange}) {
   return (
     <div className="row mb-3">
       <label htmlFor={groupId} className="col-sm-2 col-form-label">{label}</label>
@@ -108,7 +195,7 @@ function SelectButtons({groupId, label, settings, options}) {
           {options.map(option => 
 
             <p className="d-inline-flex gap-1" key={groupId + option} role="group" aria-label={"Checkbox for " + groupId}>
-              <input type="checkbox" className="btn-check" id={option} name={option} itemProp={groupId} autoComplete="off" defaultChecked={settings[groupId]?.[option] }/>
+              <input type="checkbox" className="btn-check" id={option} name={option} autoComplete="off" defaultChecked={settings[groupId]?.[option] ?? false} onChange={onChange} />
               <label className="btn btn-outline-primary " htmlFor={option}>{option}</label>
             </p>
           )}

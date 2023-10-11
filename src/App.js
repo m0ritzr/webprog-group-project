@@ -22,7 +22,7 @@ function App() {
           </div>
           <div style={{ flex: "1" }}>
             <Routes>
-              <Route path="/filter" element={<SettingsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/like" element={<LikePage />} />
               <Route path="/matches" element={<MatchesPage />} />
             </Routes>
