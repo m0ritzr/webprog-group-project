@@ -9,13 +9,7 @@ import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
 
 async function animalTypesLoader() {
-  let animalTypes = {};
-
-  await Promise.all(
-     animalTypes = await fetchAnimalTypes()
-  );
-
-  return animalTypes;
+  return await fetchAnimalTypes()
 }
 
 function ProtectedRoute({ children }) {
