@@ -1,83 +1,85 @@
 import React, { useState } from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import { useData } from "../dataContext";
-import { fetchAnimalTypes, fetchAnimals } from "../petfinder";
-
-// TODO
-// Get several pets at the same time, add to a list, add/remove from list on like/dislike (makes 'swiping' instantaneous and api calls happen in the background)
-// (make the calls to construct the list as soon as the settings are saved?)
-
-// Save a list of all liked/disliked pets, make sure the same pet isnt showed again
-
-// Many pets dont have photos, add stuff do deal with this
-
+import { fetchAnimals } from "../petfinder";
+import { useEffect, useCallback } from "react";
 
 function LikePage() {
   // eslint-disable-next-line no-unused-vars
-  const { settings, setSettings, matches, setMatches } = useData();
+  const { settings, setMatches, matches, setDeclined, declined } = useData();
 
   const [pets, setPets] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [currentPage, setCurrentPage] = useState(1) // Needs improvement
+  const type = settings.type ? settings.type : "Dog";
 
-  const petPref = settings.petPreference ? settings.petPreference : "Dog";
+  const fetchMorePets = useCallback(async () => {
+    setIsLoading(true);
+    
+    const animals = await fetchAnimals({ type: type, page: currentPage });
+    const animalsWithPhotos = animals.animals.filter(animal => animal.photos.length !== 0);
+    const uniqueAnimals = animalsWithPhotos.filter(animal => !matches.includes(animal.id) && !declined.includes(animal.id));
+    
+    setPets(prevPets => [...prevPets, ...uniqueAnimals]);
+    setIsLoading(false);
+  }, [type, currentPage, matches, declined]);
+
+  useEffect(() => {
+    if (!pets.length) {
+        fetchMorePets(); 
+    }
+}, [pets, fetchMorePets]);
 
 
   function handleLikeClick() {
-    addToMatches()
-    const newPetList = getUpdatedList()
-    fillListWithPets(newPetList)
-  }
-
-  function getUpdatedList() {
-    return [...pets.slice(1, pets.length)]
+    if (pets.length) {
+      setMatches([...matches, pets[0].id]);
+      setPets(pets.slice(1));
+    }
   }
 
   function handleDislikeClick() {
-    //const pet = getNewPet()
-  }
-
-  function addToMatches() {
-    console.log("Add to matches")
-  }
-
-  //TODO, needs better implementaion
-  async function fillListWithPets(pets) {
-    console.log("fill list")
-
-    let tmpArr = [...pets]
-    while(tmpArr.length < 15) {
-      let animalsWithPhotos = null;
-      const animals = await fetchAnimals({type:petPref, page:currentPage})
-      setCurrentPage(currentPage + 1)
-      animalsWithPhotos = animals.animals.filter((animal) => animal.photos.length !== 0)
-      if(animalsWithPhotos.length === 0) {
-        console.log(animals)
-        throw new Error("AAA")
-      }
-      tmpArr = [...tmpArr, ...animalsWithPhotos]
-      console.log(tmpArr)
+    if (pets.length) {
+      setDeclined([...declined, pets[0].id]);
+      setPets(pets.slice(1));
     }
-    setPets([...tmpArr])
   }
+
+  useEffect(() => {
+    if (!pets.length) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  }, [pets]);
+
+  
 
   // TODO, make height fit the screen
   // Stop container from changing size when image is changes
   return (
     <div className="container-sm p-3">
       <h2>Like Pets</h2>
-      <Card className="">
-        <Card.Img className="object-fit-scale" variant="top" src={pets[0] ? pets[0].photos[0].large : "" /** can break if there are no large photos */} />
-        <Card.Body>
-          <Card.Title>Pet Name</Card.Title>
+        <Card style={{ height: '90vh', maxWidth: '50vw' }}>
+            {isLoading ? (
+              <Spinner animation="border" role="status"></Spinner>
+            ) : (
+              <Card.Img 
+              className="w-100 h-75 object-fit-cover" 
+              variant="top" 
+              src={pets[0]?.photos[0].large || ""}
+          />
+        )} 
+
+        <Card.Body className="h-25">
+          <Card.Title>{isLoading ? "Loading..." : (pets[0]?.name || "Pet Name")}</Card.Title>
           <Card.Text>Pet Details</Card.Text>
-          <div className="col">          
-            <button type="button" className="btn btn-success btn-lg" onClick={handleLikeClick}>
+          <div className="col">
+            <Button variant="success" size="lg" onClick={handleLikeClick} disabled={isLoading}>
               Like
-            </button>
-            <button type="button" className="btn btn-danger btn-lg" onClick={handleDislikeClick}>
+            </Button>
+            <Button variant="danger" size="lg" onClick={handleDislikeClick} disabled={isLoading}>
               Dislike
-            </button>
+            </Button>
           </div>
         </Card.Body>
       </Card>

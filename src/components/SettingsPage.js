@@ -1,47 +1,46 @@
 import React from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
-import { useEffect } from "react";
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import { useLoaderData } from "react-router";
 
 function SettingsPage() {
-  const { settings, setSettings, uid } = useData();
+  const { settings } = useData();
 
   const animalTypes = useLoaderData();
   console.log(animalTypes);
-  
-  useEffect(() => {
-    if (uid) { 
-      const docRef = doc(db, 'settings', uid); 
-      
-      getDoc(docRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          setSettings(docSnap.data());
-        } else {
-          console.log("No settings found for user");
-        }
-      }).catch((error) => {
-        console.log("Error fetching settings:", error);
-      });
-    }
 
-  }, [uid, setSettings]);
+  console.log(JSON.stringify(settings));
+  
+  // useEffect(() => {
+  //   if (uid) { 
+  //     const docRef = doc(db, 'settings', uid); 
+      
+  //     getDoc(docRef).then((docSnap) => {
+  //       if (docSnap.exists()) {
+  //         setSettings(docSnap.data());
+  //       } else {
+  //         console.log("No settings found for user");
+  //       }
+  //     }).catch((error) => {
+  //       console.log("Error fetching settings:", error);
+  //     });
+  //   }
+
+  // }, [uid, setSettings]);
   
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const selectedPet = e.target.petType.value;
     
-    const docRef = doc(db, 'settings', uid);
-    setDoc(docRef, {
-        petPreference: selectedPet
-    }).then(() => {
-        setSettings({ petPreference: selectedPet });
-    }).catch((error) => {
-        console.error("Error updating settings:", error);
-    });
+    // const docRef = doc(db, 'settings', uid);
+    // setDoc(docRef, {
+    //     petPreference: selectedPet
+    // }).then(() => {
+    //     setSettings({ petPreference: selectedPet });
+    // }).catch((error) => {
+    //     console.error("Error updating settings:", error);
+    // });
   };
 
   return (
