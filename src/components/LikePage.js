@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
+import { fetchAnimalTypes, fetchAnimals } from "../petfinder";
 
 // TODO
 // Get several pets at the same time, add to a list, add/remove from list on like/dislike (makes 'swiping' instantaneous and api calls happen in the background)
@@ -8,36 +9,56 @@ import { useData } from "../dataContext";
 
 // Save a list of all liked/disliked pets, make sure the same pet isnt showed again
 
+// Many pets dont have photos, add stuff do deal with this
 
 
 function LikePage() {
   // eslint-disable-next-line no-unused-vars
   const { settings, setSettings, matches, setMatches } = useData();
-  const [pet, setPet] = useState({petName: "Pet Name", petImg: "cat1.jpg", petDetails: "Details about pet"})
 
-  //tmp
-  const imgs = ["cat1.jpg", "cat2.webp", "dog1.jpg", "dog2.webp"]
+  const [pets, setPets] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(1) // Needs improvement
+
+  const petPref = settings.petPreference ? settings.petPreference : "Dog";
+
 
   function handleLikeClick() {
-    const pet = getNewPet()
-    setPet(pet)
     addToMatches()
+    const newPetList = getUpdatedList()
+    fillListWithPets(newPetList)
+  }
+
+  function getUpdatedList() {
+    return [...pets.slice(1, pets.length)]
   }
 
   function handleDislikeClick() {
-    const pet = getNewPet()
+    //const pet = getNewPet()
   }
 
   function addToMatches() {
     console.log("Add to matches")
   }
 
-  function getNewPet() {
-    // Get a pet that matches settings
+  //TODO, needs better implementaion
+  async function fillListWithPets(pets) {
+    console.log("fill list")
 
-    //tmp
-    const img = imgs[Math.floor(Math.random() * 4)]
-    return {petName: "Pet Name", petImg: img, petDetails: "Details about pet"}
+    let tmpArr = [...pets]
+    while(tmpArr.length < 15) {
+      let animalsWithPhotos = null;
+      const animals = await fetchAnimals({type:petPref, page:currentPage})
+      setCurrentPage(currentPage + 1)
+      animalsWithPhotos = animals.animals.filter((animal) => animal.photos.length !== 0)
+      if(animalsWithPhotos.length === 0) {
+        console.log(animals)
+        throw new Error("AAA")
+      }
+      tmpArr = [...tmpArr, ...animalsWithPhotos]
+      console.log(tmpArr)
+    }
+    setPets([...tmpArr])
   }
 
   // TODO, make height fit the screen
@@ -46,10 +67,10 @@ function LikePage() {
     <div className="container-sm p-3">
       <h2>Like Pets</h2>
       <Card className="">
-        <Card.Img className="object-fit-scale" variant="top" src={`./tmpimgs/${pet.petImg}`} />
+        <Card.Img className="object-fit-scale" variant="top" src={pets[0] ? pets[0].photos[0].large : "" /** can break if there are no large photos */} />
         <Card.Body>
-          <Card.Title>{pet.petName}</Card.Title>
-          <Card.Text>{pet.petDetails}</Card.Text>
+          <Card.Title>Pet Name</Card.Title>
+          <Card.Text>Pet Details</Card.Text>
           <div className="col">          
             <button type="button" className="btn btn-success btn-lg" onClick={handleLikeClick}>
               Like
