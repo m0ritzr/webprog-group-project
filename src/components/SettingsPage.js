@@ -1,30 +1,21 @@
 import React from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { propTypes } from "react-bootstrap/esm/Image";
-import { fetchAnimalTypes, fetchAnimal } from "../petfinder";
+import { useLoaderData } from "react-router";
 
 function SettingsPage() {
   const { settings, setSettings, uid } = useData();
 
-  const [ petFilters, setPetFilters ] = useState({});
-
-  const animalTypes = fetchAnimalTypes();
-
-  const animal = fetchAnimal("59904220");
-
-
-  console.log((animalTypes));
-
-  console.log(JSON.stringify(animal));
-
+  const animalTypes = useLoaderData();
+  console.log(animalTypes);
+  
   useEffect(() => {
-    if (uid) {
-      const docRef = doc(db, 'settings', uid);
-
+    if (uid) { 
+      const docRef = doc(db, 'settings', uid); 
+      
       getDoc(docRef).then((docSnap) => {
         if (docSnap.exists()) {
           setSettings(docSnap.data());
@@ -37,19 +28,19 @@ function SettingsPage() {
     }
 
   }, [uid, setSettings]);
-
+  
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const selectedPet = e.target.petType.value;
-
+    
     const docRef = doc(db, 'settings', uid);
     setDoc(docRef, {
-      petPreference: selectedPet
+        petPreference: selectedPet
     }).then(() => {
-      setSettings({ petPreference: selectedPet });
+        setSettings({ petPreference: selectedPet });
     }).catch((error) => {
-      console.error("Error updating settings:", error);
+        console.error("Error updating settings:", error);
     });
   };
 
@@ -59,120 +50,13 @@ function SettingsPage() {
       <Card className="mt-4">
         <Card.Body>
           <Form onSubmit={handleFormSubmit}>
-
-  
-
-            <SelectButtons
-              groupId="petType"
-              label="Type of Pet"
-              settings={settings}
-              options={["Cat", "Dog", "Bird", "Bunny", "Hamster", "Guniea Pig", "Fish"]}
-              onChange={e => setPetFilters(
-                {
-                  ...petFilters,
-                  ["petType"]: { 
-                    ...petFilters["petType"],
-                    [e.target.name]: e.target.checked  }
-                }
-              )
-              } />
-
-            <SelectButtons
-              groupId="breed"
-              label="Breed"
-              settings={settings}
-              options={["breed1", "breed2"]}
-              onChange={e => setPetFilters(
-                {
-                  ...petFilters,
-                  ["Breed"]: {
-                    ...petFilters["Breed"],
-                    [e.target.name]: e.target.checked
-                  }
-                }
-              )
-              } />
-
-
-            <SelectButtons
-              groupId="age"
-              label="age"
-              settings={settings}
-              options={["young", "adult"]}
-              onChange={e => setPetFilters(
-                {
-                  ...petFilters,
-                  ["age"]: {
-                    ...petFilters["age"],
-                    [e.target.name]: e.target.checked
-                  }
-                }
-              )
-              } />
-
-            <SelectButtons
-              groupId="attributes"
-              label="attributes"
-              settings={settings}
-              options={["spayed_neutered", "house_trained", "special_needs", "shots_current"]}
-              onChange={e => setPetFilters(
-                {
-                  ...petFilters,
-                  ["attributes"]: {
-                    ...petFilters["attributes"],
-                    [e.target.name]: e.target.checked
-                  }
-                }
-              )
-              } />
-
-           
-
-            <SelectButtons
-              groupId="enviroment"
-              label="Enviroment"
-              settings={settings}
-              options={["childrens", "dogs", "cats" ]}
-              onChange={e => setPetFilters(
-                {
-                  ...petFilters,
-                  ["breed"]: {
-                    ...petFilters["B´breed"],
-                    [e.target.name]: e.target.checked
-                  }
-                }
-              )
-              } />
-
-
-            <SelectButtons
-              groupId="tags"
-              label="Tags"
-              settings={settings}
-              options={["Cute", "Intelligent", "Large", "Playful", "Happy", "Affectionate"]}
-              onChange={e => setPetFilters(
-                {
-                  ...petFilters,
-                  ["breed"]: {
-                    ...petFilters["B´breed"],
-                    [e.target.name]: e.target.checked
-                  }
-                }
-              )
-              } />
-
-         
-
             <Form.Group controlId="petType">
               <Form.Label>Type of Pet</Form.Label>
               <Form.Control as="select" defaultValue={settings?.petPreference}>
-                <option> Katt</option>
-                <option> Hund</option>
+                <option>Dog</option>
+                <option>Cat</option>
               </Form.Control>
             </Form.Group>
-
-
-
             <Button variant="primary" type="submit" className="mt-3">
               Apply Filters
             </Button>
@@ -184,25 +68,4 @@ function SettingsPage() {
 }
 
 export default SettingsPage;
-
-
-function SelectButtons({ groupId, label, settings, options, onChange}) {
-  return (
-    <div className="row mb-3">
-      <label htmlFor={groupId} className="col-sm-2 col-form-label">{label}</label>
-        <div className="col-sm-10">
-
-          {options.map(option => 
-
-            <p className="d-inline-flex gap-1" key={groupId + option} role="group" aria-label={"Checkbox for " + groupId}>
-              <input type="checkbox" className="btn-check" id={option} name={option} autoComplete="off" defaultChecked={settings[groupId]?.[option] ?? false} onChange={onChange} />
-              <label className="btn btn-outline-primary " htmlFor={option}>{option}</label>
-            </p>
-          )}
-        </div>
-      </div>
-  );
-}
-
-
 
