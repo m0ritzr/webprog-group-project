@@ -8,69 +8,76 @@ import { fetchAnimalTypes } from "./petfinder";
 import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
 
-async function animalTypesLoader() {
-  return await fetchAnimalTypes()
+async function animalTypeDictLoader() {
+    const fetchedAnimalTypes = await fetchAnimalTypes();
+    
+    const animalTypeDict = fetchedAnimalTypes.types.reduce((acc, animalTypeObj) => {
+        acc[animalTypeObj.name] = animalTypeObj;
+        return acc;
+    }, {});
+
+    return animalTypeDict;
 }
 
 function ProtectedRoute({ children }) {
-    const { isLoggedIn } = useData();
-  
-    return isLoggedIn ? children : <Navigate to="/login" />;
-  }
+  const { isLoggedIn } = useData();
+
+  return isLoggedIn ? children : <Navigate to="/login" />;
+}
 
 const router = createBrowserRouter([
-    {
-        element: <App />,
-        children: [
-        {
-            path: "login",
-            element: <Login />
-        },
-        {
-            index: true,
-            element: (
-            <ProtectedRoute>
-                <div className="p-4">
-                <h2>Welcome!</h2>
-                </div>
-            </ProtectedRoute>
-            ),
-        },
-        {
-            path: "settings",
-            loader: animalTypesLoader,
-            element: (
-            <ProtectedRoute>
-                <SettingsPage />
-            </ProtectedRoute>
-            ),
-        },
-        {
-            path: "like",
-            element: (
-            <ProtectedRoute>
-                <LikePage />
-            </ProtectedRoute>
-            ),
-        },
-        {
-            path: "matches",
-            element: (
-            <ProtectedRoute>
-                <MatchesPage />
-            </ProtectedRoute>
-            ),
-        },
-        {
-            path: "*",
-            element: (
+  {
+    element: <App />,
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
             <div className="p-4">
-                <h2>Page not found</h2>
+              <h2>Welcome!</h2>
             </div>
-            ),
-        },
-        ],
-    },
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "settings",
+        loader: animalTypeDictLoader,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "like",
+        element: (
+          <ProtectedRoute>
+            <LikePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "matches",
+        element: (
+          <ProtectedRoute>
+            <MatchesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "*",
+        element: (
+          <div className="p-4">
+            <h2>Page not found</h2>
+          </div>
+        ),
+      },
+    ],
+  },
 ]);
 
 export default router;

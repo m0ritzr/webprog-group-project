@@ -1,15 +1,14 @@
 body {
-    background-color: #f8f9fa;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  h2 {
-    border-bottom: 1px solid #dee2e6;
-    padding-bottom: 10px;
-  }
-  
-  /* Additional Global Styles */
-  .container-fluid {
-    padding: 20px;
-  }
-  
+  background-color: #f8f9fa;
+  font-family: "Arial", sans-serif;
+}
+
+h2 {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 10px;
+}
+
+/* Additional Global Styles */
+.container-fluid {
+  padding: 20px;
+}
