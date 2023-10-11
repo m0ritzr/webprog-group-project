@@ -7,7 +7,7 @@ function Sidebar() {
     <div className="d-flex flex-column align-items-start p-3">
       <h5 className="mb-4">Navigation</h5>
       <ButtonGroup vertical>
-        <LinkContainer to="/filter">
+        <LinkContainer to="/settings">
           <Button variant="outline-primary" className="mb-2">Filter/Settings</Button>
         </LinkContainer>
         <LinkContainer to="/like">

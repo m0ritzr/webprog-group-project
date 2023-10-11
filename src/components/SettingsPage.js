@@ -4,10 +4,13 @@ import { useData } from "../dataContext";
 import { useEffect } from "react";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { fetchAnimalTypes } from "../petfinder";
+import { useLoaderData } from "react-router";
 
 function SettingsPage() {
   const { settings, setSettings, uid } = useData();
+
+  const animalTypes = useLoaderData();
+  console.log(animalTypes);
   
   useEffect(() => {
     if (uid) { 

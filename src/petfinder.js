@@ -22,18 +22,18 @@ async function fetchFromCloudFunction(endpoint, queryParams = {}) {
 }
 
 export async function fetchAnimal(id) {
-    return await fetchFromCloudFunction('https://fetchanimal-m65pqwyajq-uc.a.run.app', { id });
+    return fetchFromCloudFunction('https://fetchanimal-m65pqwyajq-uc.a.run.app', { id });
 }
 
 // accepted params: type, breed, size, gender, age, color, location, distance, page (results are paginated) 
 export async function fetchAnimals(params) {
-    return await fetchFromCloudFunction('https://fetchanimals-m65pqwyajq-uc.a.run.app', params);
+    return fetchFromCloudFunction('https://fetchanimals-m65pqwyajq-uc.a.run.app', params);
 }
 
 export async function fetchAnimalTypes() {
-    return await fetchFromCloudFunction('https://fetchanimaltypes-m65pqwyajq-uc.a.run.app');
+    return fetchFromCloudFunction('https://fetchanimaltypes-m65pqwyajq-uc.a.run.app'); 
 }
 
 export async function fetchAnimalBreeds(type) {
-    return await fetchFromCloudFunction('https://fetchanimalbreeds-m65pqwyajq-uc.a.run.app', { type });
+    return fetchFromCloudFunction('https://fetchanimalbreeds-m65pqwyajq-uc.a.run.app', { type });
 }
