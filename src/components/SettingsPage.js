@@ -26,14 +26,22 @@ function SettingsPage() {
   const [selectedAges, setSelectedAges] = useState(settings.age || []);
   const [selectedColors, setSelectedColors] = useState(settings.color || []);
   const [selectedCoats, setSelectedCoats] = useState(settings.coat || []);
-  const [selectedAttributes, setSelectedAttributes] = useState(settings.attributes || []);
-  const [selectedLocation, setSelectedLocation] = useState(settings.location || "10001");
-  const [selectedDistance, setSelectedDistance] = useState(settings.distance || "100");
+  const [selectedAttributes, setSelectedAttributes] = useState(
+    settings.attributes || [],
+  );
+  const [selectedLocation, setSelectedLocation] = useState(
+    settings.location || "10001",
+  );
+  const [selectedDistance, setSelectedDistance] = useState(
+    settings.distance || "100",
+  );
 
   useEffect(() => {
     async function fetchBreeds() {
       const animalBreedsObj = await fetchAnimalBreeds(selectedType);
-      const animalBreeds = animalBreedsObj.breeds.map((breedObj) => breedObj.name)
+      const animalBreeds = animalBreedsObj.breeds.map(
+        (breedObj) => breedObj.name,
+      );
       console.log(animalBreeds);
       setAvailableBreeds(animalBreeds);
     }
@@ -52,26 +60,26 @@ function SettingsPage() {
 
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
-    const setter = settersMap[name];  // get the corresponding setter
-    setter(prevState => {
+    const setter = settersMap[name]; // get the corresponding setter
+    setter((prevState) => {
       if (checked) {
         return [...prevState, value];
       } else {
-        return prevState.filter(item => item !== value);
+        return prevState.filter((item) => item !== value);
       }
     });
   };
 
-  console.log(animalTypeDict)
+  console.log(animalTypeDict);
 
   console.log(JSON.stringify(settings));
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
-  
+
     // Construct the settings object:
     const updatedSettings = {
       type: selectedType,
@@ -83,9 +91,9 @@ function SettingsPage() {
       coat: selectedCoats,
       attributes: selectedAttributes,
       location: selectedLocation,
-      distance: selectedDistance
+      distance: selectedDistance,
     };
-  
+
     // Update the settings in the context:
     console.log(updatedSettings);
     setSettings(updatedSettings);
@@ -229,7 +237,7 @@ function SettingsPage() {
                 name="location"
                 placeholder="Enter US postal code"
                 defaultValue={selectedLocation}
-                onChange={e => setSelectedLocation(e.target.value)}
+                onChange={(e) => setSelectedLocation(e.target.value)}
                 pattern="^\d{5}$" // A basic regex pattern for 5-digit US postal code
               />
             </Form.Group>

@@ -79,6 +79,7 @@ const corsHandler = cors({ origin: true });
 const fetchAnimal = onRequest(async (request, response) => {
   corsHandler(request, response, async () => {
     try {
+      response.set("Cache-Control", "public, max-age=300, s-maxage=600");
       response.set("Access-Control-Allow-Origin", "*");
       response.set("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
       response.set("Access-Control-Allow-Headers", "*");
@@ -105,6 +106,7 @@ const fetchAnimal = onRequest(async (request, response) => {
 const fetchAnimals = onRequest(async (request, response) => {
   corsHandler(request, response, async () => {
     try {
+      response.set("Cache-Control", "public, max-age=300, s-maxage=600");
       response.set("Access-Control-Allow-Origin", "*");
       response.set("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
       response.set("Access-Control-Allow-Headers", "*");
@@ -116,27 +118,8 @@ const fetchAnimals = onRequest(async (request, response) => {
 
       await verifyToken(request);
 
-      const {
-        type,
-        breed,
-        size,
-        gender,
-        age,
-        color,
-        location,
-        distance,
-        page,
-      } = request.query;
-      const queryParams = new URLSearchParams();
-      if (type) queryParams.append("type", type);
-      if (breed) queryParams.append("breed", breed);
-      if (size) queryParams.append("size", size);
-      if (gender) queryParams.append("gender", gender);
-      if (age) queryParams.append("age", age);
-      if (color) queryParams.append("color", color);
-      if (location) queryParams.append("location", location);
-      if (distance) queryParams.append("distance", distance);
-      if (page) queryParams.append("page", page);
+      const queryParams = new URLSearchParams(request.query);
+
       const url = `https://api.petfinder.com/v2/animals?${queryParams.toString()}`;
       const result = await safeFetchJson(url);
       response.send(result);
@@ -150,6 +133,7 @@ const fetchAnimals = onRequest(async (request, response) => {
 const fetchAnimalTypes = onRequest(async (request, response) => {
   corsHandler(request, response, async () => {
     try {
+      response.set("Cache-Control", "public, max-age=300, s-maxage=600");
       response.set("Access-Control-Allow-Origin", "*");
       response.set("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
       response.set("Access-Control-Allow-Headers", "*");
@@ -173,6 +157,7 @@ const fetchAnimalTypes = onRequest(async (request, response) => {
 const fetchAnimalBreeds = onRequest(async (request, response) => {
   corsHandler(request, response, async () => {
     try {
+      response.set("Cache-Control", "public, max-age=300, s-maxage=600");
       response.set("Access-Control-Allow-Origin", "*");
       response.set("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
       response.set("Access-Control-Allow-Headers", "*");

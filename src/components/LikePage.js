@@ -74,7 +74,9 @@ function LikePage() {
           <Card.Title>
             {isLoading ? "Loading..." : pets[0]?.name || "Pet Name"}
           </Card.Title>
-          <Card.Text>Pet Details</Card.Text>
+          <Card.Text>
+            {isLoading ? "Loading..." : pets[0]?.description || "Description"}
+          </Card.Text>
           <div className="col">
             <Button
               variant="success"

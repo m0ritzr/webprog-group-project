@@ -15,7 +15,7 @@ function MatchesPage() {
     const loadPets = async () => {
       const loadedPetsObj = {};
 
-      const promises = matches.map(async match => {
+      const promises = matches.map(async (match) => {
         if (!loadedPetsObj[match]) {
           const result = await fetchAnimal(match);
           loadedPetsObj[match] = result.animal;
@@ -30,23 +30,28 @@ function MatchesPage() {
     };
 
     loadPets();
-
-}, [matches]);
+  }, [matches]);
 
   return (
     <div className="p-4">
       <h2>My Matches</h2>
-        {isLoading ? <h3>Loading</h3> : matches.map(match => (
-          <Card className="mt-4 vh-10 mh-20 vw-75" style={{flexDirection: "row"}}>
-            <Card.Img variant="top" className="w-25 mh-100 object-fit-cover" src={loadedPetsData[match].photos[0].medium} />
+      {isLoading ? (
+        <h3>Loading</h3>
+      ) : (
+        matches.map((match) => (
+          <Card className="mt-4 vh-10 vw-75" style={{ flexDirection: "row" }}>
+            <Card.Img
+              variant="top"
+              className="w-25 mh-100 object-fit-cover"
+              src={loadedPetsData[match].photos[0].medium}
+            />
             <Card.Body>
               <Card.Title>{loadedPetsData[match].name}</Card.Title>
-              <Card.Text>
-                {loadedPetsData[match].description}
-              </Card.Text>
+              <Card.Text>{loadedPetsData[match].description}</Card.Text>
             </Card.Body>
           </Card>
-        ))}
+        ))
+      )}
     </div>
   );
 }

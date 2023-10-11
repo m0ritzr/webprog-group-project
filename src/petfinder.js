@@ -55,28 +55,27 @@ export async function fetchAnimalBreeds(type) {
 }
 
 function convertSettingsToQueryParams(settings) {
-    let queryParams = {};
-  
-    const convertArrayToString = (array) => array.join(',');
-  
-    for (let key in settings) {
-      let value = settings[key];
-  
-      if (key === "attributes") {
-        value.forEach(attribute => {
-            queryParams[attribute]="true";
-        });
-        continue;
-      }
-  
-      if (Array.isArray(value)) {
-        value = convertArrayToString(value);
-      }
-  
-      if (value && value.length > 0) {
-        queryParams[key]=value.toString();
-      }
+  let queryParams = {};
+
+  const convertArrayToString = (array) => array.join(",");
+
+  for (let key in settings) {
+    let value = settings[key];
+
+    if (key === "attributes") {
+      value.forEach((attribute) => {
+        queryParams[attribute] = "true";
+      });
+      continue;
     }
-    return queryParams;
+
+    if (Array.isArray(value)) {
+      value = convertArrayToString(value);
+    }
+
+    if (value && value.length > 0) {
+      queryParams[key] = value.toString();
+    }
   }
-  
+  return queryParams;
+}

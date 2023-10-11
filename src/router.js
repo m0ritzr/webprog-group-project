@@ -9,14 +9,17 @@ import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
 
 async function animalTypeDictLoader() {
-    const fetchedAnimalTypes = await fetchAnimalTypes();
-    
-    const animalTypeDict = fetchedAnimalTypes.types.reduce((acc, animalTypeObj) => {
-        acc[animalTypeObj.name] = animalTypeObj;
-        return acc;
-    }, {});
+  const fetchedAnimalTypes = await fetchAnimalTypes();
 
-    return animalTypeDict;
+  const animalTypeDict = fetchedAnimalTypes.types.reduce(
+    (acc, animalTypeObj) => {
+      acc[animalTypeObj.name] = animalTypeObj;
+      return acc;
+    },
+    {},
+  );
+
+  return animalTypeDict;
 }
 
 function ProtectedRoute({ children }) {
