@@ -4,8 +4,8 @@ import LikePage from "./components/LikePage";
 import SettingsPage from "./components/SettingsPage";
 import MatchesPage from "./components/MatchesPage";
 import Login from "./components/Login";
-import FilterPage from "./components/FilterPage";
-import ProfilePage from "./components/ProfilePage";
+import Filter from "./components/Filter";
+import Profile from "./components/Profile";
 
 
 
@@ -67,18 +67,18 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "profile-page",
+            path: "profile",
             element: (
               <ProtectedRoute>
-                <ProfilePage />
+                <Profile />
               </ProtectedRoute>
             ),
           },
           {
-            path: "filter-page/:animalType/",
+            path: "filter/:animalType/",
             element: (
               <ProtectedRoute>
-                <FilterPage />
+                <Filter />
               </ProtectedRoute>
             ),
             },

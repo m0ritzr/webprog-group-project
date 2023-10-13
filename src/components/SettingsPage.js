@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Form, Button, Card, Accordion } from "react-bootstrap";
+import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
 import { useLoaderData } from "react-router";
 import { fetchAnimalBreeds } from "../petfinder";
+import { Outlet, NavLink } from 'react-router-dom';
 
 
 export default function SettingsPage(){
@@ -18,7 +19,7 @@ export default function SettingsPage(){
       );
 }
 
-function SettingsNav() {
+function SettingsNav(animalTypes) {
 
   return (
 

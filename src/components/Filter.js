@@ -1,5 +1,11 @@
 import { React, useContext, useParams, useState } from "react";
-import { Form, Button, Accordion } from "react-bootstrap";
+
+import { Form, Button, Row, Col, Accordion } from "react-bootstrap";
+
+import AccordionHeader from "react-bootstrap/AccordionHeader";
+import AccordionItem from "react-bootstrap/AccordionItem";
+import AccordionBody from "react-bootstrap/AccordionBody";
+
 import { useData } from "../dataContext";
 
 function toTitleCase(str) {
@@ -15,8 +21,8 @@ function toTitleCase(str) {
 export default function Filter() {
   const { settings, setSettings } = useData();
 
-  const type = useParams();
-  const typeFilters = useContext(); 
+  const { animalType } = useParams();
+  const { animalTypesDict } = useContext();
 
   const [selectedBreeds, setSelectedBreeds] = useState(settings.breed || []);
   const [selectedSizes, setSelectedSizes] = useState(settings.size || []);
@@ -28,6 +34,9 @@ export default function Filter() {
     settings.attributes || [],
   );
 
+
+  const [activeFilter, setActiveFilter] = useState();
+
   const settersMap = {
     breed: setSelectedBreeds,
     size: setSelectedSizes,
@@ -37,7 +46,9 @@ export default function Filter() {
     coat: setSelectedCoats,
     attributes: setSelectedAttributes,
   };
-
+  function handleActiveFilter(e) {
+    setActiveFilter(e.target.name)
+  }
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
     const setter = settersMap[name]; // get the corresponding setter
@@ -51,20 +62,19 @@ export default function Filter() {
   };
 
   const selectAll = (e) => {
-    const { name, value } = e.target;
-    const setter = settersMap[name]; // get the corresponding setter
-    
-    value ? setter( { ...typeFilters.breeds} ) : setter([]);
+    // const { name, value } = e.target;
+    // const setter = settersMap[name]; // get the corresponding setter
+
+    // value ? setter( { ...animalTypesDict[type][name]} ) : setter([]);
   };
 
   console.log(JSON.stringify(settings));
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-
     // Construct the settings object:
     const updatedType = {
-      type: selectedType,
+      //type: selectedType,
       breed: selectedBreeds,
       size: selectedSizes,
       gender: selectedGenders,
@@ -81,216 +91,176 @@ export default function Filter() {
     setSettings(updatedSettings);
   };
 
-    return (
-                <Form>
-                  {/* select for breeds */}
-                  <Form.Group>
+  return (
+
+    <Accordion defaultActiveKey="" handleActiveFilter={handleActiveFilter}>
+      <AccordionItem eventKey="Breeds">
+        <AccordionHeader>
+          Breeds
+        </AccordionHeader>
+        <AccordionBody>
+          <Form.Check
+            reverse
+            label="Select all breeds"
+            name="all-breeds"
+            type="reverse-checkbox"
+            id={"all-breeds"}
+          />
+
+          <div className="row row-cols-3">
+            {animalTypesDict[animalType].breeds.map(breed =>
+              <div className="col p-1" key={breed}>
+
+                <Form.Check // prettier-ignore
+                  type={breed}
+                  id={`${breed}`}
+                  name={breed }
+                  label={breed}
+                  onChange={setSelectedBreeds}
+                />
+              </div>
+            )};
+          </div>
+        </AccordionBody>
+      </AccordionItem>
+
+      <Accordion.Item>
+        <Accordion.Body>
+
+          <Form>
+            {/* select for breeds */}
+            <Form.Group>
+              <Form.Check
+                type="switch"
+                name="breed"
+                label="Select all breeds"
+                reverse
+                onChange={selectAll}
+              />
+              <Row md={4}>
+                {animalTypesDict[animalType].breeds.map(breed =>
+                  <Col>
                     <Form.Check
-                      type="switch"
-                      name="breed"
-                      label="Select all breeds"
-                      reverse
-                      onChange={selectAll}
+                      type="checkbox"
+                      id={breed}
+                      label={breed}
+                      onChange={handleCheckboxChange}
                     />
-                    <Row md={4}>
-                      {animalType.breeds.map(breed =>
-                        <Col>
-                          <Form.Check
-                            type="checkbox"
-                            id={animalType + '-' + breed}
-                            label={breed}
-                            onChange={handleCheckboxChange}
-                          />
-                        </Col>
-                      )};
-                    </Row>
-                  </Form.Group>
-  
-                  {/* select for sizes */}
-                  <Form.Group>
+                  </Col>
+                )};
+              </Row>
+            </Form.Group>
+
+            {/* select for sizes */}
+            <Form.Group>
+              <Form.Check
+                type="switch"
+                name="size"
+                label="Select all sizes"
+                reverse
+                onChange={selectAll}
+              />
+              <Form.Label>Sizes</Form.Label>
+              {["small", "medium", "large", "xlarge"].map((size) => (
+                <Form.Check
+                  type="checkbox"
+                  label={toTitleCase(size.replace("_", " "))}
+                  name="size"
+                  value={size}
+                  defaultChecked={selectedSizes.includes(size)}
+                  onChange={handleCheckboxChange}
+                />
+              ))}
+            </Form.Group>
+
+            {/* select for gender */}
+            <Form.Group>
+              <Form.Label>Genders</Form.Label>
+              {animalTypesDict[animalType].genders.map((gender) => (
+                <Form.Check
+                  type="checkbox"
+                  label={toTitleCase(gender.replace("_", " "))}
+                  name="gender"
+                  value={gender}
+                  defaultChecked={selectedGenders.includes(gender)}
+                  onChange={handleCheckboxChange}
+                />
+              ))}
+            </Form.Group>
+
+            {/* select for age */}
+            <Form.Group>
+              <Form.Label>Ages</Form.Label>
+              {["baby", "young", "adult", "senior"].map((age) => (
+                <Form.Check
+                  type="checkbox"
+                  label={toTitleCase(age.replace("_", " "))}
+                  name="age"
+                  value={age}
+                  defaultChecked={selectedAges.includes(age)}
+                  onChange={handleCheckboxChange}
+                />
+              ))}
+            </Form.Group>
+
+            {/* select for color */}
+            <Form.Group>
+              <Form.Label>Colors</Form.Label>
+              {animalTypesDict[animalType].colors.map((color) => (
+                <Form.Check
+                  type="checkbox"
+                  label={toTitleCase(color.replace("_", " "))}
+                  name="color"
+                  value={color}
+                  defaultChecked={selectedColors.includes(color)}
+                  onChange={handleCheckboxChange}
+                />
+              ))}
+            </Form.Group>
+
+            {/* select for coat */}
+            <Form.Group>
+              <Form.Label>Coats</Form.Label>
+              {animalTypesDict[animalType].coats.map((coat) => (
+                <Form.Check
+                  type="checkbox"
+                  label={toTitleCase(coat.replace("_", " "))}
+                  name="coat"
+                  value={coat}
+                  defaultChecked={selectedCoats.includes(coat)}
+                  onChange={handleCheckboxChange}
+                />
+              ))}
+            </Form.Group>
+
+            {/* select for attributes */}
+            <Form.Group>
+              <Form.Label>Attributes</Form.Label>
+              {["spayed_neutered", "house_trained", "special_needs"].map(
+                (attribute) => (
                   <Form.Check
-                      type="switch"
-                      name="size"
-                      label="Select all sizes"
-                      reverse
-                      onChange={selectAll}
-                    />
-                    <Form.Label>Sizes</Form.Label>
-                    {["small", "medium", "large", "xlarge"].map((size) => (
-                      <Form.Check
-                        type="checkbox"
-                        label={toTitleCase(size.replace("_", " "))}
-                        name="size"
-                        value={size}
-                        defaultChecked={selectedSizes.includes(size)}
-                        onChange={handleCheckboxChange}
-                      />
-                    ))}
-                  </Form.Group>
-  
-                  {/* select for gender */}
-                  <Form.Group>
-                    <Form.Label>Genders</Form.Label>
-                    {animalTypeDict[selectedType].genders.map((gender) => (
-                      <Form.Check
-                        type="checkbox"
-                        label={toTitleCase(gender.replace("_", " "))}
-                        name="gender"
-                        value={gender}
-                        defaultChecked={selectedGenders.includes(gender)}
-                        onChange={handleCheckboxChange}
-                      />
-                    ))}
-                  </Form.Group>
-  
-                  {/* select for age */}
-                  <Form.Group>
-                    <Form.Label>Ages</Form.Label>
-                    {["baby", "young", "adult", "senior"].map((age) => (
-                      <Form.Check
-                        type="checkbox"
-                        label={toTitleCase(age.replace("_", " "))}
-                        name="age"
-                        value={age}
-                        defaultChecked={selectedAges.includes(age)}
-                        onChange={handleCheckboxChange}
-                      />
-                    ))}
-                  </Form.Group>
-  
-                  {/* select for color */}
-                  <Form.Group>
-                    <Form.Label>Colors</Form.Label>
-                    {animalTypeDict[selectedType].colors.map((color) => (
-                      <Form.Check
-                        type="checkbox"
-                        label={toTitleCase(color.replace("_", " "))}
-                        name="color"
-                        value={color}
-                        defaultChecked={selectedColors.includes(color)}
-                        onChange={handleCheckboxChange}
-                      />
-                    ))}
-                  </Form.Group>
-  
-                  {/* select for coat */}
-                  <Form.Group>
-                    <Form.Label>Coats</Form.Label>
-                    {animalTypeDict[selectedType].coats.map((coat) => (
-                      <Form.Check
-                        type="checkbox"
-                        label={toTitleCase(coat.replace("_", " "))}
-                        name="coat"
-                        value={coat}
-                        defaultChecked={selectedCoats.includes(coat)}
-                        onChange={handleCheckboxChange}
-                      />
-                    ))}
-                  </Form.Group>
-  
-                  {/* select for attributes */}
-                  <Form.Group>
-                    <Form.Label>Attributes</Form.Label>
-                    {["spayed_neutered", "house_trained", "special_needs"].map(
-                      (attribute) => (
-                        <Form.Check
-                          type="checkbox"
-                          label={toTitleCase(attribute.replace("_", " "))}
-                          name="attributes"
-                          value={attribute}
-                          defaultChecked={selectedAttributes.includes(attribute)}
-                          onChange={handleCheckboxChange}
-                        />
-                      ),
-                    )}
-                  </Form.Group>
-  
-                  <Form.Group>
-                    <Form.Label>Postal Code</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="location"
-                      placeholder="Enter US postal code"
-                      defaultValue={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      pattern="^\d{5}$" // A basic regex pattern for 5-digit US postal code
-                    />
-                  </Form.Group>
-  
-                  <Form.Group>
-                    <Form.Label>Distance: max {selectedDistance} miles</Form.Label>
-                    <Form.Control
-                      type="range"
-                      min="0"
-                      max="500"
-                      step="10"
-                      name="distance"
-                      value={selectedDistance}
-                      onChange={(e) => setSelectedDistance(e.target.value)}
-                    />
-                    <Form.Text className="text-muted">
-                      Slide to adjust the distadnce range.
-                    </Form.Text>
-                  </Form.Group>
-  
-                  <Button variant="primary" type="submit" className="mt-3">
-                    Apply Filters
-                  </Button>
-  
-                </Form>
-  
-              </Accordion.Body>
-            </Accordion.Item>
-  
-          </div>
-  
-        )};
-  
-      </Accordion>
-  
-    );
-  }
-  
-  function oldBreedFilter(animalTypesDict, onChangeBreed) {
-  
-    return (
-      <Accordion defaultActiveKey="">
-  
-        {Object.keys(animalTypesDict).map(animalType =>
-          <div key={animalType}>
-            <Accordion.Item eventKey={animalType}>
-              <Accordion.Header>{animalType}</Accordion.Header>
-              <Accordion.Body>
-  
-                <div className="form-check form-switch form-check-reverse" key="all-breeds">
-                  <input className="form-check-input" name="all-breeds" type="checkbox" id="all-breeds" onChange={onChangeBreed} />
-                  <label className="form-check-label" htmlFor="all-breeds">
-                    <h6>Select all breeds</h6>
-                  </label>
-                </div>
-  
-                <div className="row row-cols-3">
-                  {breeds.map(breed =>
-                    <div className="col p-1" key={breed}>
-  
-                      <Form.Check // prettier-ignore
-                        type={breed}
-                        id={`${breed}`}
-                        name={animalType + "/" + breed}
-                        label={` ${breed}`}
-                        onChange={onChangeBreed}
-                      />
-                    </div>
-                  )};
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-  
-          </div>
-  
-        )};
-  
-      </Accordion>
-    );
-  
-  }
+                    type="checkbox"
+                    label={toTitleCase(attribute.replace("_", " "))}
+                    name="attributes"
+                    value={attribute}
+                    defaultChecked={selectedAttributes.includes(attribute)}
+                    onChange={handleCheckboxChange}
+                  />
+                ),
+              )}
+            </Form.Group>
+
+            <Button variant="primary" type="submit" className="mt-3">
+              Apply Filters
+            </Button>
+
+          </Form>
+
+        </Accordion.Body>
+      </Accordion.Item >
+    </Accordion>
+
+
+
+  );
+}
