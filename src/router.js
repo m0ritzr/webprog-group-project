@@ -60,6 +60,23 @@ const router = createBrowserRouter([
             <SettingsPage />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            path: "confirm/:animalType/",
+            element: <typeFilters />
+          }
+        ]
+      },
+
+      {
+        path: "filter-page",
+        loader: animalTypeDictLoader,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
+        
       },
       {
         path: "like",
