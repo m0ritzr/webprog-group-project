@@ -4,14 +4,13 @@ import { useData } from "../dataContext";
 import { fetchAnimal } from "../petfinder";
 import { useToasts } from "../ToastContext";
 import {
-  FaGenderless,
+  FaVenusMars,
   FaPaw,
   FaBirthdayCake,
   FaTag,
   FaMapMarkerAlt,
   FaRuler,
 } from "react-icons/fa";
-import { useRef } from "react";
 
 function MatchesPage() {
   // eslint-disable-next-line no-unused-vars
@@ -146,34 +145,52 @@ function MatchCard({
         <Row>
           <Col className="d-flex flex-column align-items-left mb-2">
             <Badge variant="dark" className="mb-2">
-              <FaPaw style={{ color: "white" }} className="mr-1" />
+              <FaPaw
+                style={{ color: "white", marginRight: "5px" }}
+                className="mr-1"
+              />
               {petData.species} - {petData.breeds.primary}
             </Badge>
             <Badge variant="dark">
-              <FaRuler style={{ color: "white" }} className="mr-1" />
+              <FaRuler
+                style={{ color: "white", marginRight: "5px" }}
+                className="mr-1"
+              />
               {petData.size}
             </Badge>
           </Col>
 
           <Col className="d-flex flex-column align-items-left mb-2">
             <Badge variant="dark" className="mb-2">
-              <FaBirthdayCake style={{ color: "white" }} className="mr-1" />
+              <FaBirthdayCake
+                style={{ color: "white", marginRight: "5px" }}
+                className="mr-1"
+              />
               {petData.age}
             </Badge>
             <Badge variant="dark">
-              <FaMapMarkerAlt style={{ color: "white" }} className="mr-1" />
+              <FaMapMarkerAlt
+                style={{ color: "white", marginRight: "5px" }}
+                className="mr-1"
+              />
               {petData.contact.address.city}, {petData.contact.address.state}
             </Badge>
           </Col>
 
           <Col className="d-flex flex-column align-items-left mb-2">
             <Badge variant="dark" className="mb-2">
-              <FaGenderless style={{ color: "white" }} className="mr-1" />
+              <FaVenusMars
+                style={{ color: "white", marginRight: "5px" }}
+                className="mr-1"
+              />
               {petData.gender}
             </Badge>
             {petData.tags.length ? (
               <Badge variant="dark">
-                <FaTag style={{ color: "white" }} className="mr-1" />
+                <FaTag
+                  style={{ color: "white", marginRight: "5px" }}
+                  className="mr-1"
+                />
                 {petData.tags.join(", ")}
               </Badge>
             ) : null}
@@ -185,16 +202,6 @@ function MatchCard({
 }
 
 function ContactModal({ show, contact, onClose }) {
-  const emailRef = useRef();
-  const phoneRef = useRef();
-
-  function copyToClipboard(ref) {
-    const el = ref.current;
-    el.select();
-    document.execCommand("copy");
-    onClose(); // Close the modal after copying
-  }
-
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header closeButton>
@@ -230,7 +237,9 @@ function ContactModal({ show, contact, onClose }) {
             </span>
             <Button
               variant="outline-primary"
-              onClick={() => copyToClipboard(phoneRef)}
+              onClick={() => {
+                navigator.clipboard.writeText(contact.phone);
+              }}
               className="ml-2 w-25"
             >
               Copy Phone
