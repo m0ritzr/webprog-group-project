@@ -41,6 +41,7 @@ export default function SettingsPage() {
 
   const [petFilters, setPetFilters] = useState({});
   const [breedFilter, setBreedFilter] = useState({});
+  const [currentType, setCurrentType] = useState();
 
   useEffect(() => {
     async function fetchBreeds() {
@@ -125,6 +126,8 @@ export default function SettingsPage() {
               groupId="petType"
               label="Type of Pet"
               settings={settings}
+              currentType={currentType}
+              onChangeCurrentType= { e => setCurrentType(e.target.name)}
               options={animalTypeDict}
               breeds={availableBreeds}
               onChangeBreed={handleBreedFilter}
@@ -307,7 +310,7 @@ export default function SettingsPage() {
 
 
 
-function SelectType2({ groupId, options, breeds, onChangeBreed }) {
+function SelectType2({ groupId,currentType, options, breeds, onChangeBreed }) {
   return (
     <Accordion defaultActiveKey="">
 
@@ -327,12 +330,15 @@ function SelectType2({ groupId, options, breeds, onChangeBreed }) {
             <div className="row row-cols-3">
               {breeds.map(breed =>
                 <div className="col p-1" key={breed}>
-                  <div className="form-check" aria-label={"Checkbox for" + breed}>
-                    <input type="checkbox" className="form-check-input" id={animalType + "-" + breed} name={breed} autoComplete="off" defaultChecked={false} onChange={onChangeBreed} />
-                    <label className="form-check-label " htmlFor={breed}>
-                      {breed}
-                    </label>
-                  </div>
+                  
+                  
+                  <Form.Check // prettier-ignore
+                    type={breed}
+                    id={`${breed}`}
+                    name={animalType + "/" + breed}
+                    label={` ${breed}`}
+                    onChange={onChangeBreed} 
+                  />
                 </div>
               )};
             </div>

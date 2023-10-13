@@ -363,3 +363,46 @@ function SelectType2({ groupId, label, settings, options, breeds, onChangeBreed,
     </>
   );
     }
+
+
+
+
+    function SelectAccordion({ groupId, currentType, options, breeds, onChangeBreed }) {
+        return (
+            <Accordion defaultActiveKey="">
+
+                {Object.keys(options).map(animalType =>
+                    <div key={animalType}>
+                        <Accordion.Item eventKey={animalType}>
+                            <Accordion.Header>{animalType}</Accordion.Header>
+                            <Accordion.Body>
+
+                                <div className="form-check form-switch form-check-reverse" key="all-breeds">
+                                    <input className="form-check-input" name="all-breeds" type="checkbox" id="all-breeds" onChange={onChangeBreed} />
+                                    <label className="form-check-label" htmlFor="all-breeds">
+                                        <h6>Select all breeds</h6>
+                                    </label>
+                                </div>
+
+                                <div className="row row-cols-3">
+                                    {breeds.map(breed =>
+                                        <div className="col p-1" key={breed}>
+                                            <div className="form-check" aria-label={"Checkbox for" + breed}>
+                                                <input type="checkbox" className="form-check-input" id={animalType + "-" + breed} name={animalType + "/" + breed} autoComplete="off" defaultChecked={false} onChange={onChangeBreed} />
+                                                <label className="form-check-label " htmlFor={breed}>
+                                                    {breed}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    )};
+                                </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
+
+                    </div>
+
+                )};
+
+            </Accordion>
+
+        );
