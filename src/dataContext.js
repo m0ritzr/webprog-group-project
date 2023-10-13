@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { fetchAnimalTypes, fetchAnimalBreeds } from "./petfinder";
 
 const DataContext = createContext();
 
@@ -10,6 +11,7 @@ export const useData = () => {
 
 export const DataProvider = ({ children }) => {
   const [settings, setSettings] = useState({});
+  const [animalTypesDict, setAnimalTypesDict] = useState({});
   const [matches, setMatches] = useState([]);
   const [declined, setDeclined] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,6 +19,9 @@ export const DataProvider = ({ children }) => {
 
   const [isSettingsInitialized, setIsSettingsInitialized] = useState(false);
   const [isAnimalsInitialized, setIsAnimalsInitialized] = useState(false);
+  const [isAnimalTypesDictInitialized, setIsAnimalTypesDictInitialized] =
+    useState(false);
+
   useEffect(() => {
     if (uid && isLoggedIn) {
       // Fetch data from Firebase when user logs in
@@ -72,6 +77,37 @@ export const DataProvider = ({ children }) => {
   }, [matches, declined, uid, isLoggedIn, isAnimalsInitialized]);
 
   useEffect(() => {
+    if (uid && isLoggedIn && !isAnimalTypesDictInitialized) {
+      console.log("Fetching animal types dict");
+      async function fetchAnimalTypesDict() {
+        const fetchedAnimalTypes = await fetchAnimalTypes();
+        let animalTypeDict = {};
+
+        const animalTypePromises = fetchedAnimalTypes.types.map(
+          async (animalTypeObj) => {
+            const animalBreedsObj = await fetchAnimalBreeds(animalTypeObj.name);
+            animalTypeObj.breeds = animalBreedsObj.breeds.map(
+              (breedObj) => breedObj.name
+            );
+            animalTypeDict[animalTypeObj.name] = animalTypeObj;
+          }
+        );
+
+        await Promise.all(animalTypePromises);
+
+        setAnimalTypesDict(animalTypeDict);
+        console.log("Animal types dict fetched");
+        console.log(
+          "isAnimalTypesIntialized changed:",
+          isAnimalTypesDictInitialized
+        ); // debugging line
+        setIsAnimalTypesDictInitialized(true);
+      }
+      fetchAnimalTypesDict();
+    }
+  }, [uid, isLoggedIn, isAnimalTypesDictInitialized]);
+
+  useEffect(() => {
     if (!isLoggedIn) {
       // Reset state variables when user logs out
       setSettings({});
@@ -84,6 +120,8 @@ export const DataProvider = ({ children }) => {
   const value = {
     settings,
     setSettings,
+    animalTypesDict,
+    isAnimalTypesDictInitialized,
     matches,
     setMatches,
     declined,

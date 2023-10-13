@@ -1,12 +1,16 @@
-import { React, useContext, useParams, useState } from "react";
-
-import { Form, Button, Row, Col, Accordion } from "react-bootstrap";
-
-import AccordionHeader from "react-bootstrap/AccordionHeader";
-import AccordionItem from "react-bootstrap/AccordionItem";
-import AccordionBody from "react-bootstrap/AccordionBody";
-
+import { React, useState } from "react";
+import {
+  Form,
+  Button,
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  Row,
+  Col,
+} from "react-bootstrap";
 import { useData } from "../dataContext";
+import AccordionBody from "react-bootstrap/esm/AccordionBody";
+import { useParams } from "react-router";
 
 function toTitleCase(str) {
   return str
@@ -19,10 +23,13 @@ function toTitleCase(str) {
 }
 
 export default function Filter() {
-  const { settings, setSettings } = useData();
+  const { settings, setSettings, animalTypesDict } = useData();
 
-  const { animalType } = useParams();
-  const { animalTypesDict } = useContext();
+  console.log("animal types dict:", animalTypesDict);
+
+  const type = useParams().animalType;
+
+  const animalType = animalTypesDict[type];
 
   const [selectedBreeds, setSelectedBreeds] = useState(settings.breed || []);
   const [selectedSizes, setSelectedSizes] = useState(settings.size || []);
@@ -31,11 +38,8 @@ export default function Filter() {
   const [selectedColors, setSelectedColors] = useState(settings.color || []);
   const [selectedCoats, setSelectedCoats] = useState(settings.coat || []);
   const [selectedAttributes, setSelectedAttributes] = useState(
-    settings.attributes || [],
+    settings.attributes || []
   );
-
-
-  const [activeFilter, setActiveFilter] = useState();
 
   const settersMap = {
     breed: setSelectedBreeds,
@@ -46,9 +50,7 @@ export default function Filter() {
     coat: setSelectedCoats,
     attributes: setSelectedAttributes,
   };
-  function handleActiveFilter(e) {
-    setActiveFilter(e.target.name)
-  }
+
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
     const setter = settersMap[name]; // get the corresponding setter
@@ -62,19 +64,19 @@ export default function Filter() {
   };
 
   const selectAll = (e) => {
-    // const { name, value } = e.target;
-    // const setter = settersMap[name]; // get the corresponding setter
+    const { name, value } = e.target;
+    const setter = settersMap[name]; // get the corresponding setter
 
-    // value ? setter( { ...animalTypesDict[type][name]} ) : setter([]);
+    value ? setter({ ...animalType.breeds }) : setter([]);
   };
 
   console.log(JSON.stringify(settings));
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
     // Construct the settings object:
     const updatedType = {
-      //type: selectedType,
       breed: selectedBreeds,
       size: selectedSizes,
       gender: selectedGenders,
@@ -92,43 +94,11 @@ export default function Filter() {
   };
 
   return (
-
-    <Accordion defaultActiveKey="" handleActiveFilter={handleActiveFilter}>
-      <AccordionItem eventKey="Breeds">
-        <AccordionHeader>
-          Breeds
-        </AccordionHeader>
-        <AccordionBody>
-          <Form.Check
-            reverse
-            label="Select all breeds"
-            name="all-breeds"
-            type="reverse-checkbox"
-            id={"all-breeds"}
-          />
-
-          <div className="row row-cols-3">
-            {animalTypesDict[animalType].breeds.map(breed =>
-              <div className="col p-1" key={breed}>
-
-                <Form.Check // prettier-ignore
-                  type={breed}
-                  id={`${breed}`}
-                  name={breed }
-                  label={breed}
-                  onChange={setSelectedBreeds}
-                />
-              </div>
-            )};
-          </div>
-        </AccordionBody>
-      </AccordionItem>
-
-      <Accordion.Item>
-        <Accordion.Body>
-
-          <Form>
-            {/* select for breeds */}
+    <Form onSubmit={handleFormSubmit}>
+      <Accordion defaultActiveKey="breeds">
+        <AccordionItem eventKey="breeds">
+          <Accordion.Header>Breeds</Accordion.Header>
+          <AccordionBody>
             <Form.Group>
               <Form.Check
                 type="switch"
@@ -138,28 +108,26 @@ export default function Filter() {
                 onChange={selectAll}
               />
               <Row md={4}>
-                {animalTypesDict[animalType].breeds.map(breed =>
+                {animalType.breeds.map((breed) => (
                   <Col>
                     <Form.Check
                       type="checkbox"
-                      id={breed}
+                      name="breed"
+                      id={animalType + "-" + breed}
                       label={breed}
                       onChange={handleCheckboxChange}
                     />
                   </Col>
-                )};
+                ))}
               </Row>
             </Form.Group>
-
+          </AccordionBody>
+        </AccordionItem>
+        <AccordionItem eventKey="sizes">
+          <Accordion.Header>Sizes</Accordion.Header>
+          <AccordionBody>
             {/* select for sizes */}
             <Form.Group>
-              <Form.Check
-                type="switch"
-                name="size"
-                label="Select all sizes"
-                reverse
-                onChange={selectAll}
-              />
               <Form.Label>Sizes</Form.Label>
               {["small", "medium", "large", "xlarge"].map((size) => (
                 <Form.Check
@@ -172,11 +140,15 @@ export default function Filter() {
                 />
               ))}
             </Form.Group>
-
+          </AccordionBody>
+        </AccordionItem>
+        <AccordionItem eventKey="genders">
+          <AccordionHeader>Genders</AccordionHeader>
+          <AccordionBody>
             {/* select for gender */}
             <Form.Group>
               <Form.Label>Genders</Form.Label>
-              {animalTypesDict[animalType].genders.map((gender) => (
+              {animalType.genders.map((gender) => (
                 <Form.Check
                   type="checkbox"
                   label={toTitleCase(gender.replace("_", " "))}
@@ -187,7 +159,11 @@ export default function Filter() {
                 />
               ))}
             </Form.Group>
-
+          </AccordionBody>
+        </AccordionItem>
+        <AccordionItem eventKey="ages">
+          <AccordionHeader>Ages</AccordionHeader>
+          <AccordionBody>
             {/* select for age */}
             <Form.Group>
               <Form.Label>Ages</Form.Label>
@@ -206,7 +182,7 @@ export default function Filter() {
             {/* select for color */}
             <Form.Group>
               <Form.Label>Colors</Form.Label>
-              {animalTypesDict[animalType].colors.map((color) => (
+              {animalType.colors.map((color) => (
                 <Form.Check
                   type="checkbox"
                   label={toTitleCase(color.replace("_", " "))}
@@ -217,11 +193,15 @@ export default function Filter() {
                 />
               ))}
             </Form.Group>
-
+          </AccordionBody>
+        </AccordionItem>
+        <AccordionItem eventKey="coats">
+          <AccordionHeader>Coats</AccordionHeader>
+          <AccordionBody>
             {/* select for coat */}
             <Form.Group>
               <Form.Label>Coats</Form.Label>
-              {animalTypesDict[animalType].coats.map((coat) => (
+              {animalType.coats.map((coat) => (
                 <Form.Check
                   type="checkbox"
                   label={toTitleCase(coat.replace("_", " "))}
@@ -232,7 +212,11 @@ export default function Filter() {
                 />
               ))}
             </Form.Group>
-
+          </AccordionBody>
+        </AccordionItem>
+        <AccordionItem eventKey="attributes">
+          <AccordionHeader>Attributes</AccordionHeader>
+          <AccordionBody>
             {/* select for attributes */}
             <Form.Group>
               <Form.Label>Attributes</Form.Label>
@@ -246,21 +230,16 @@ export default function Filter() {
                     defaultChecked={selectedAttributes.includes(attribute)}
                     onChange={handleCheckboxChange}
                   />
-                ),
+                )
               )}
             </Form.Group>
+          </AccordionBody>
+        </AccordionItem>
+      </Accordion>
 
-            <Button variant="primary" type="submit" className="mt-3">
-              Apply Filters
-            </Button>
-
-          </Form>
-
-        </Accordion.Body>
-      </Accordion.Item >
-    </Accordion>
-
-
-
+      <Button variant="primary" type="submit" className="mt-3">
+        Apply Filters
+      </Button>
+    </Form>
   );
 }

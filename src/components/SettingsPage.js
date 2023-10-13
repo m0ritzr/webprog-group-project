@@ -1,42 +1,39 @@
-import { useEffect, useState } from "react";
-import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
-import { useLoaderData } from "react-router";
-import { fetchAnimalBreeds } from "../petfinder";
-import { Outlet, NavLink } from 'react-router-dom';
+import { Nav } from "react-bootstrap";
+import { Outlet } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
 
+export default function SettingsPage() {
+  const { animalTypesDict } = useData();
 
-export default function SettingsPage(){
-
+  console.log(animalTypesDict);
+  console.log(animalTypesDict.Dog);
+  console.log(Object.keys(animalTypesDict));
 
   return (
     <div className="p-4">
       <h2>Profile and Filters</h2>
-      <SettingsNav />
+      <SettingsNav dict={animalTypesDict} />
       <Outlet />
-        
-      </div>
-      );
+    </div>
+  );
 }
 
-function SettingsNav(animalTypes) {
-
+function SettingsNav({ dict }) {
   return (
-
-
-    <ul className="nav nav-tabs">
-      <li className="nav-item">
-        <NavLink className="nav-link" to="/compose-salad">
-          Komponera sallad
-        </NavLink>
-      </li>
-      <li className="nav-item">
-        <NavLink className="nav-link" to="/view-order">
-          Varukorg
-        </NavLink>
-      </li>
-    </ul>
-        
-    );
-
+    <Nav variant="tabs" defaultActiveKey="/profile">
+      <Nav.Item>
+        <LinkContainer to="/settings/profile">
+          <Nav.Link>Profile</Nav.Link>
+        </LinkContainer>
+      </Nav.Item>
+      {Object.keys(dict).map((animalType) => (
+        <Nav.Item>
+          <LinkContainer to={"/settings/filter/" + animalType}>
+            <Nav.Link>{animalType}</Nav.Link>
+          </LinkContainer>
+        </Nav.Item>
+      ))}
+    </Nav>
+  );
 }

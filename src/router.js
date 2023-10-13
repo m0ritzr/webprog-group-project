@@ -7,31 +7,8 @@ import Login from "./components/Login";
 import Filter from "./components/Filter";
 import Profile from "./components/Profile";
 
-
-
-import { fetchAnimalTypes, fetchAnimalBreeds } from "./petfinder";
 import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
-
-async function animalTypeDictLoader() {
-  const fetchedAnimalTypes = await fetchAnimalTypes();
-  let animalTypeDict = {};
-
-  await Promise.all(
-    animalTypeDict = fetchedAnimalTypes.types.reduce(
-      async (acc, animalTypeObj) => {
-        const animalBreedsObj = await fetchAnimalBreeds(animalTypeObj.name);
-        animalTypeObj.breeds = animalBreedsObj.breeds.map(
-          (breedObj) => breedObj.name,
-        );
-        acc[animalTypeObj.name] = animalTypeObj;
-        return acc;
-      },
-      {},
-    ));
-
-  return animalTypeDict;
-}
 
 function ProtectedRoute({ children }) {
   const { isLoggedIn } = useData();
@@ -59,7 +36,6 @@ const router = createBrowserRouter([
       },
       {
         path: "settings",
-        loader: animalTypeDictLoader,
         element: (
           <ProtectedRoute>
             <SettingsPage />
@@ -76,13 +52,9 @@ const router = createBrowserRouter([
           },
           {
             path: "filter/:animalType/",
-            element: (
-              <ProtectedRoute>
-                <Filter />
-              </ProtectedRoute>
-            ),
-            },
-        ]
+            element: <Filter />,
+          },
+        ],
       },
       {
         path: "like",

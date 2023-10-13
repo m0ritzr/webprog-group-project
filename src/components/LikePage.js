@@ -18,10 +18,10 @@ function LikePage() {
     console.log(settings);
     const animals = await fetchAnimals({ ...settings, page: currentPage });
     const animalsWithPhotos = animals.animals.filter(
-      (animal) => animal.photos.length !== 0,
+      (animal) => animal.photos.length !== 0
     );
     const uniqueAnimals = animalsWithPhotos.filter(
-      (animal) => !matches.includes(animal.id) && !declined.includes(animal.id),
+      (animal) => !matches.includes(animal.id) && !declined.includes(animal.id)
     );
 
     setPets((prevPets) => [...prevPets, ...uniqueAnimals]);
