@@ -1,21 +1,6 @@
-import { React, useEffect, useState } from "react";
-import { Form, Button, Card, Accordion } from "react-bootstrap";
+import { React, useState } from "react";
+import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
-import { useLoaderData } from "react-router";
-import { fetchAnimalBreeds } from "../petfinder";
-
-import 'bootstrap/dist/js/bootstrap.bundle.min';
-
-
-function toTitleCase(str) {
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map(function (word) {
-      return word.replace(word[0], word[0].toUpperCase());
-    })
-    .join(" ");
-}
 
 export default function SettingsPage() {
   const { settings, setSettings } = useData();
@@ -27,12 +12,22 @@ export default function SettingsPage() {
     settings.distance || "100",
   );
 
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    const changedSettings = { ...settings };
+    changedSettings.location = selectedLocation;
+    changedSettings.distance = selectedDistance;
+
+    setSettings(changedSettings);
+  }
+
   return (
     <div className="p-4">
       <h2>Filter and Settings</h2>
       <Card className="mt-4">
         <Card.Body>
-          <Outlet />
+          <Card.Title>Profile</Card.Title>
           <Form onSubmit={handleFormSubmit}>
             <Form.Group>
               <Form.Label>Postal Code</Form.Label>
@@ -63,7 +58,7 @@ export default function SettingsPage() {
             </Form.Group>
 
             <Button variant="primary" type="submit" className="mt-3">
-              Apply Filters
+              Apply Profile Settings
             </Button>
           </Form>
         </Card.Body>
