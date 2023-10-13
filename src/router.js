@@ -4,6 +4,11 @@ import LikePage from "./components/LikePage";
 import SettingsPage from "./components/SettingsPage";
 import MatchesPage from "./components/MatchesPage";
 import Login from "./components/Login";
+import FilterPage from "./components/FilterPage";
+import ProfilePage from "./components/ProfilePage";
+
+
+
 import { fetchAnimalTypes, fetchAnimalBreeds } from "./petfinder";
 import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
