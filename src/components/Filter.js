@@ -1,7 +1,6 @@
-import { React, useEffect, useState } from "react";
+import { React, useContext, useParams, useState } from "react";
 import { Form, Button, Accordion } from "react-bootstrap";
 import { useData } from "../dataContext";
-import { useLoaderData } from "react-router";
 
 function toTitleCase(str) {
   return str
@@ -13,13 +12,12 @@ function toTitleCase(str) {
     .join(" ");
 }
 
-function Filters({ animalTypesDict }) {
+export default function Filter() {
   const { settings, setSettings } = useData();
 
-  const animalTypeDict = useLoaderData();
-  const [availableBreeds, setAvailableBreeds] = useState([]);
+  const type = useParams();
+  const typeFilters = useContext(); 
 
-  const [selectedType, setSelectedType] = useState(settings.type || "Cat");
   const [selectedBreeds, setSelectedBreeds] = useState(settings.breed || []);
   const [selectedSizes, setSelectedSizes] = useState(settings.size || []);
   const [selectedGenders, setSelectedGenders] = useState(settings.gender || []);
@@ -29,10 +27,6 @@ function Filters({ animalTypesDict }) {
   const [selectedAttributes, setSelectedAttributes] = useState(
     settings.attributes || [],
   );
-  
-  const [petFilters, setPetFilters] = useState({});
-  const [breedFilter, setBreedFilter] = useState({});
-  const [currentType, setCurrentType] = useState();
 
   const settersMap = {
     breed: setSelectedBreeds,
@@ -56,18 +50,20 @@ function Filters({ animalTypesDict }) {
     });
   };
 
-  console.log(animalTypeDict);
+  const selectAll = (e) => {
+    const { name, value } = e.target;
+    const setter = settersMap[name]; // get the corresponding setter
+    
+    value ? setter( { ...typeFilters.breeds} ) : setter([]);
+  };
 
   console.log(JSON.stringify(settings));
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const formValues = Object.fromEntries(formData.entries());
-
     // Construct the settings object:
-    const updatedSettings = {
+    const updatedType = {
       type: selectedType,
       breed: selectedBreeds,
       size: selectedSizes,
@@ -76,41 +72,30 @@ function Filters({ animalTypesDict }) {
       color: selectedColors,
       coat: selectedCoats,
       attributes: selectedAttributes,
-      location: selectedLocation,
-      distance: selectedDistance,
     };
+
+    const updatedSettings = { ...settings, type: updatedType };
 
     // Update the settings in the context:
     console.log(updatedSettings);
     setSettings(updatedSettings);
   };
 
-  function handleBreedFilter(e) {
-    setBreedFilter(
-      {
-        ...breedFilter,
-        [e.target.name]: e.target.checked,
-      }
-    );
-  }
-
     return (
       <Accordion defaultActiveKey="">
-  
-        {Object.keys(animalTypesDict).map(animalType =>
-          <div key={animalType}>
-            <Accordion.Item eventKey={animalType}>
-              <Accordion.Header>{animalType}</Accordion.Header>
+            <Accordion.Item eventKey={type}>
+              <Accordion.Header>{type}</Accordion.Header>
               <Accordion.Body>
                 <Form>
                   {/* select for breeds */}
                   <Form.Group controlId={type + '-breed'}>
                     <Form.Check
                       type="switch"
+
                       id={animalType + '-all-breeds'}
                       label="Select all breeds"
                       reverse
-                      onChange={(e) => { selectAllBreedsHandler(e, animalType) }}
+                      onChange={selectAll}
                     />
   
                     <Row md={4}>

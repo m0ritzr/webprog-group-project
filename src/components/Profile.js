@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useData } from "../dataContext";
 
-export default function SettingsPage() {
+export default function Profile() {
   const { settings, setSettings } = useData();
   
   const [selectedLocation, setSelectedLocation] = useState(
