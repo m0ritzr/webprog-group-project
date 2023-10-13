@@ -4,20 +4,26 @@ import LikePage from "./components/LikePage";
 import SettingsPage from "./components/SettingsPage";
 import MatchesPage from "./components/MatchesPage";
 import Login from "./components/Login";
-import { fetchAnimalTypes } from "./petfinder";
+import { fetchAnimalTypes, fetchAnimalBreeds } from "./petfinder";
 import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
 
 async function animalTypeDictLoader() {
   const fetchedAnimalTypes = await fetchAnimalTypes();
+  let animalTypeDict = {};
 
-  const animalTypeDict = fetchedAnimalTypes.types.reduce(
-    (acc, animalTypeObj) => {
-      acc[animalTypeObj.name] = animalTypeObj;
-      return acc;
-    },
-    {},
-  );
+  await Promise.all(
+    animalTypeDict = fetchedAnimalTypes.types.reduce(
+      async (acc, animalTypeObj) => {
+        const animalBreedsObj = await fetchAnimalBreeds(animalTypeObj.name);
+        animalTypeObj.breeds = animalBreedsObj.breeds.map(
+          (breedObj) => breedObj.name,
+        );
+        acc[animalTypeObj.name] = animalTypeObj;
+        return acc;
+      },
+      {},
+    ));
 
   return animalTypeDict;
 }
