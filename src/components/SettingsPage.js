@@ -4,10 +4,12 @@ import { Outlet } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
+import { useToasts } from "../ToastContext";
 
 export default function SettingsPage() {
   const { animalTypesDict, settings, setSettings } = useData();
   const [selectedType, setSelectedType] = useState(settings.type || "");
+  const { addToast } = useToasts();
 
   console.log(animalTypesDict);
   console.log(animalTypesDict.Dog);
@@ -16,6 +18,14 @@ export default function SettingsPage() {
   const handleTypeChange = (type) => {
     setSelectedType(type);
     setSettings({ ...settings, type });
+
+    addToast({
+      id: `type-changed-${type}-${Date.now()}`,
+      title: `Type changed to ${type}`,
+      message: `Successfully changed type to ${type}`,
+      type: "alert-success",
+    });
+
     console.log(`Selected type: ${type}`);
   };
 
