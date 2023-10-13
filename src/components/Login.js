@@ -7,11 +7,13 @@ import {
   browserSessionPersistence,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import { useToasts } from "../ToastContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setIsLoggedIn, setUid } = useData();
+  const { addToast } = useToasts();
 
   const handleLogin = async () => {
     try {
@@ -28,6 +30,12 @@ function Login() {
         setIsLoggedIn(true);
       }
     } catch (error) {
+      addToast({
+        id: `login-failed-${Date.now()}`,
+        title: `Error signing in`,
+        message: error.message,
+        type: "alert-danger",
+      });
       console.error("Error signing in:", error.message);
     }
   };

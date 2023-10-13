@@ -11,6 +11,7 @@ import {
 import { useData } from "../dataContext";
 import AccordionBody from "react-bootstrap/esm/AccordionBody";
 import { useParams } from "react-router";
+import { useToasts } from "../ToastContext";
 
 function toTitleCase(str) {
   return str
@@ -49,6 +50,8 @@ export default function Filter() {
     setSelectedCoats(typeSettings.coat || []);
     setSelectedAttributes(typeSettings.attributes || []);
   }, [settings, type]);
+
+  const { addToast } = useToasts();
 
   const settersMap = {
     breed: setSelectedBreeds,
@@ -92,6 +95,14 @@ export default function Filter() {
     };
     const updatedSettings = { ...settings, [type]: updatedTypeSettings };
     setSettings(updatedSettings);
+
+    addToast({
+      id: `settings-updated-${Date.now()}`,
+      title: `Settings updated`,
+      message: `Successfully updated settings for ${type}`,
+      type: "alert-success",
+    });
+
     console.log("updated settings:", updatedSettings);
   };
 
