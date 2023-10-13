@@ -6,7 +6,7 @@ import { Outlet, useNavigation } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 
 function App() {
-  const { isLoggedIn } = useData();
+  const { isLoggedIn, isAnimalTypesDictInitialized } = useData();
   const navigation = useNavigation();
 
   if (!isLoggedIn) {
@@ -20,7 +20,9 @@ function App() {
       <div style={{ flex: "0 0 20%" }}>
         <Sidebar />
       </div>
-      <div style={{ flex: "1" }}>{isLoading ? <Spinner /> : <Outlet />}</div>
+      <div style={{ flex: "1" }}>
+        {isLoading || !isAnimalTypesDictInitialized ? <Spinner /> : <Outlet />}
+      </div>
     </div>
   );
 }

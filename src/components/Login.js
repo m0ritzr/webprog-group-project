@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useData } from "../dataContext";
 import { Button, Form, Container } from "react-bootstrap";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
+} from "firebase/auth";
 import { auth } from "../firebase";
 
 function Login() {
@@ -11,10 +15,12 @@ function Login() {
 
   const handleLogin = async () => {
     try {
+      await setPersistence(auth, browserSessionPersistence);
+
       const credential = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       const user = credential.user;
       if (user) {
