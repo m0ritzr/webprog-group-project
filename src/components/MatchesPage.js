@@ -46,18 +46,18 @@ function MatchesPage() {
     loadPets();
   }, [matches]);
 
-  function handleUnmatch(e, match) {
-    const newMatches = matches.filter((m) => m !== match.id);
-    const newDeclined = [...declined, match.id];
+  function handleUnmatch(e, petData) {
+    const newMatches = matches.filter((m) => m !== petData.id);
+    const newDeclined = [...declined, petData.id];
     setMatches(newMatches);
     setDeclined(newDeclined);
 
-    console.log("Unmatched with", match.name);
+    console.log("Unmatched with", petData.name);
 
     addToast({
-      id: `match-removed-${match.id}`,
-      title: `Unmatched with ${match.name}`,
-      message: `You have unmatched with ${match.name}`,
+      id: `match-removed-${petData.id}`,
+      title: `Unmatched with ${petData.name}`,
+      message: `You have unmatched with ${petData.name}`,
       type: "alert-success",
     });
   }
