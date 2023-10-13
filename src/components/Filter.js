@@ -178,37 +178,39 @@ function FilterAccordionItem({
   selectAll,
 }) {
   return (
-    <Accordion.Item eventKey={filterKey}>
-      <Accordion.Header>{label}</Accordion.Header>
-      <Accordion.Body>
-        <Form.Group>
-          <Form.Check
-            type="switch"
-            name={filterKey}
-            label={`Select all ${label}`}
-            reverse
-            checked={arraysEqual(filtersArray, selectedFilters)}
-            onChange={(e) => selectAll(filterKey, e.target.checked)}
-          />
-          <Row md={4}>
-            {filtersArray &&
-              filtersArray.length &&
-              filtersArray.map((value) => (
-                <Col>
-                  <Form.Check
-                    type="checkbox"
-                    name={filterKey}
-                    value={value}
-                    label={toTitleCase(value.replace("_", " "))}
-                    checked={selectedFilters.includes(value)}
-                    onChange={handleCheckboxChange}
-                  />
-                </Col>
-              ))}
-          </Row>
-        </Form.Group>
-      </Accordion.Body>
-    </Accordion.Item>
+    <>
+      {filtersArray && filtersArray.length ? (
+        <Accordion.Item eventKey={filterKey}>
+          <Accordion.Header>{label}</Accordion.Header>
+          <Accordion.Body>
+            <Form.Group>
+              <Form.Check
+                type="switch"
+                name={filterKey}
+                label={`Select all ${label}`}
+                reverse
+                checked={arraysEqual(filtersArray, selectedFilters)}
+                onChange={(e) => selectAll(filterKey, e.target.checked)}
+              />
+              <Row md={4}>
+                {filtersArray.map((value) => (
+                  <Col>
+                    <Form.Check
+                      type="checkbox"
+                      name={filterKey}
+                      value={value}
+                      label={toTitleCase(value.replace("_", " "))}
+                      checked={selectedFilters.includes(value)}
+                      onChange={handleCheckboxChange}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </Form.Group>
+          </Accordion.Body>
+        </Accordion.Item>
+      ) : null}{" "}
+    </>
   );
 }
 
