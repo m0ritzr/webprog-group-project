@@ -1,11 +1,11 @@
 import React from "react";
 import { Form, Button, Card } from "react-bootstrap";
-import { useData } from "../dataContext";
+import { useData } from "./src/dataContext";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from './src/firebase';
 import { propTypes } from "react-bootstrap/esm/Image";
-import { fetchAnimalTypes, fetchAnimal } from "../petfinder";
+import { fetchAnimalTypes, fetchAnimal } from "./src/petfinder";
 
 function SettingsPage() {
     const { settings, setSettings, uid } = useData();

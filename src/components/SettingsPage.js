@@ -331,7 +331,6 @@ function SelectType2({ groupId,currentType, options, breeds, onChangeBreed }) {
               {breeds.map(breed =>
                 <div className="col p-1" key={breed}>
                   
-                  
                   <Form.Check // prettier-ignore
                     type={breed}
                     id={`${breed}`}
@@ -364,6 +363,8 @@ function Filters({ animalTypesDict }) {
         <Accordion.Item eventKey={animalType}>
           <Accordion.Header>{animalType}</Accordion.Header>
           <Accordion.Body>
+
+            
             <Form.Group controlId={type + '-breed'}>
               <Form.Check
                     type="switch"
@@ -524,6 +525,7 @@ function Filters({ animalTypesDict }) {
             <Button variant="primary" type="submit" className="mt-3">
               Apply Filters
             </Button>
+            
           </Form>
 
               <div className="form-check form-switch form-check-reverse" key="all-breeds">
@@ -555,4 +557,48 @@ function Filters({ animalTypesDict }) {
     </Accordion>
 
   );
+}
+
+function oldBreedFilter(animalTypesDict, onChangeBreed){
+
+return (
+  <Accordion defaultActiveKey="">
+
+    {Object.keys(animalTypesDict).map(animalType =>
+      <div key={animalType}>
+        <Accordion.Item eventKey={animalType}>
+          <Accordion.Header>{animalType}</Accordion.Header>
+          <Accordion.Body>
+
+            <div className="form-check form-switch form-check-reverse" key="all-breeds">
+              <input className="form-check-input" name="all-breeds" type="checkbox" id="all-breeds" onChange={onChangeBreed} />
+              <label className="form-check-label" htmlFor="all-breeds">
+                <h6>Select all breeds</h6>
+              </label>
+            </div>
+
+            <div className="row row-cols-3">
+              {breeds.map(breed =>
+                <div className="col p-1" key={breed}>
+
+                  <Form.Check // prettier-ignore
+                    type={breed}
+                    id={`${breed}`}
+                    name={animalType + "/" + breed}
+                    label={` ${breed}`}
+                    onChange={onChangeBreed}
+                  />
+                </div>
+              )};
+            </div>
+          </Accordion.Body>
+        </Accordion.Item>
+
+      </div>
+
+    )};
+
+  </Accordion>
+);
+
 }
