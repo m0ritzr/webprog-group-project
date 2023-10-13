@@ -12,11 +12,20 @@ function LikePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
+  const settingsForType = React.useMemo(
+    () => ({ type: settings.type, ...settings[settings.type] }),
+    [settings]
+  );
+  console.log("settings for type:", settingsForType);
+
   const fetchMorePets = useCallback(async () => {
     setIsLoading(true);
 
-    console.log(settings);
-    const animals = await fetchAnimals({ ...settings, page: currentPage });
+    console.log(settingsForType);
+    const animals = await fetchAnimals({
+      ...settingsForType,
+      page: currentPage,
+    });
     const animalsWithPhotos = animals.animals.filter(
       (animal) => animal.photos.length !== 0
     );
@@ -26,13 +35,13 @@ function LikePage() {
 
     setPets((prevPets) => [...prevPets, ...uniqueAnimals]);
     setIsLoading(false);
-  }, [settings, currentPage, matches, declined]);
+  }, [settingsForType, currentPage, matches, declined]);
 
   useEffect(() => {
-    if (Object.keys(settings).length !== 0 && !pets.length) {
+    if (Object.keys(settingsForType).length !== 0 && !pets.length) {
       fetchMorePets();
     }
-  }, [pets, fetchMorePets, settings]);
+  }, [pets, fetchMorePets, settingsForType]);
 
   function handleLikeClick() {
     if (pets.length) {
@@ -59,6 +68,7 @@ function LikePage() {
   return (
     <div className="container-sm p-3">
       <h2>Like Pets</h2>
+
       <Card style={{ height: "90vh", maxWidth: "50vw" }}>
         {isLoading ? (
           <Spinner animation="border" role="status"></Spinner>
