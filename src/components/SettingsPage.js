@@ -1,8 +1,11 @@
 import { React, useEffect, useState } from "react";
-import { Form, Button, Card } from "react-bootstrap";
+import { Form, Button, Card, Accordion } from "react-bootstrap";
 import { useData } from "../dataContext";
 import { useLoaderData } from "react-router";
 import { fetchAnimalBreeds } from "../petfinder";
+
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+
 
 function toTitleCase(str) {
   return str
@@ -14,7 +17,7 @@ function toTitleCase(str) {
     .join(" ");
 }
 
-function SettingsPage() {
+export default function SettingsPage() {
   const { settings, setSettings } = useData();
   const animalTypeDict = useLoaderData();
   const [availableBreeds, setAvailableBreeds] = useState([]);
@@ -35,6 +38,9 @@ function SettingsPage() {
   const [selectedDistance, setSelectedDistance] = useState(
     settings.distance || "100",
   );
+
+  const [petFilters, setPetFilters] = useState({});
+  const [breedFilter, setBreedFilter] = useState({});
 
   useEffect(() => {
     async function fetchBreeds() {
@@ -99,12 +105,41 @@ function SettingsPage() {
     setSettings(updatedSettings);
   };
 
+  function handleBreedFilter(e) {
+    setBreedFilter(
+      {
+        ...breedFilter,
+        [e.target.name]: e.target.checked,
+      }
+    );
+  }
+
   return (
     <div className="p-4">
       <h2>Filter and Settings</h2>
       <Card className="mt-4">
         <Card.Body>
           <Form onSubmit={handleFormSubmit}>
+
+            <SelectType2
+              groupId="petType"
+              label="Type of Pet"
+              settings={settings}
+              options={animalTypeDict}
+              breeds={availableBreeds}
+              onChangeBreed={handleBreedFilter}
+              onChange={e => setPetFilters(
+                {
+                  ...petFilters,
+                  [""]: {
+                    ...petFilters["petType"],
+                    [e.target.name]: e.target.checked
+                  }
+                }
+              )
+              } />
+
+
             {/* dropdown for type of pet */}
             <Form.Group controlId="type">
               <Form.Label>Type of Pet</Form.Label>
@@ -268,4 +303,47 @@ function SettingsPage() {
   );
 }
 
-export default SettingsPage;
+
+
+
+
+function SelectType2({ groupId, options, breeds, onChangeBreed }) {
+  return (
+    <Accordion defaultActiveKey="">
+
+      {Object.keys(options).map(animalType =>
+      <div key ={animalType}>
+        <Accordion.Item eventKey={animalType}>
+          <Accordion.Header>{animalType}</Accordion.Header>
+          <Accordion.Body>
+
+              <div className="form-check form-switch form-check-reverse" key="all-breeds">
+                <input className="form-check-input" name="all-breeds" type="checkbox" id="all-breeds" onChange={onChangeBreed} />
+                <label className="form-check-label" htmlFor="all-breeds">
+                  <h6>Select all breeds</h6>
+                </label>
+              </div>
+
+            <div className="row row-cols-3">
+              {breeds.map(breed =>
+                <div className="col p-1" key={breed}>
+                  <div className="form-check" aria-label={"Checkbox for" + breed}>
+                    <input type="checkbox" className="form-check-input" id={animalType + "-" + breed} name={breed} autoComplete="off" defaultChecked={false} onChange={onChangeBreed} />
+                    <label className="form-check-label " htmlFor={breed}>
+                      {breed}
+                    </label>
+                  </div>
+                </div>
+              )};
+            </div>
+          </Accordion.Body>
+        </Accordion.Item>
+
+        </div>
+
+      )};
+
+    </Accordion>
+
+  );
+}
