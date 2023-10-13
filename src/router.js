@@ -43,6 +43,14 @@ const router = createBrowserRouter([
         ),
         children: [
           {
+            index: true,
+            element: 
+            <ProtectedRoute>
+                <Profile />              
+            </ProtectedRoute>
+              
+          },
+          {
             path: "profile",
             element: (
               <ProtectedRoute>
