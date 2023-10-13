@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import {
   Form,
   Button,
@@ -28,18 +28,27 @@ export default function Filter() {
   console.log("animal types dict:", animalTypesDict);
 
   const type = useParams().animalType;
-
   const animalType = animalTypesDict[type];
 
-  const [selectedBreeds, setSelectedBreeds] = useState(settings.breed || []);
-  const [selectedSizes, setSelectedSizes] = useState(settings.size || []);
-  const [selectedGenders, setSelectedGenders] = useState(settings.gender || []);
-  const [selectedAges, setSelectedAges] = useState(settings.age || []);
-  const [selectedColors, setSelectedColors] = useState(settings.color || []);
-  const [selectedCoats, setSelectedCoats] = useState(settings.coat || []);
-  const [selectedAttributes, setSelectedAttributes] = useState(
-    settings.attributes || []
-  );
+  const [selectedBreeds, setSelectedBreeds] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [selectedGenders, setSelectedGenders] = useState([]);
+  const [selectedAges, setSelectedAges] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedCoats, setSelectedCoats] = useState([]);
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
+
+  useEffect(() => {
+    const typeSettings = settings[type] || {};
+
+    setSelectedBreeds(typeSettings.breed || []);
+    setSelectedSizes(typeSettings.size || []);
+    setSelectedGenders(typeSettings.gender || []);
+    setSelectedAges(typeSettings.age || []);
+    setSelectedColors(typeSettings.color || []);
+    setSelectedCoats(typeSettings.coat || []);
+    setSelectedAttributes(typeSettings.attributes || []);
+  }, [settings, type]);
 
   const settersMap = {
     breed: setSelectedBreeds,
@@ -53,7 +62,7 @@ export default function Filter() {
 
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
-    const setter = settersMap[name]; // get the corresponding setter
+    const setter = settersMap[name];
     setter((prevState) => {
       if (checked) {
         return [...prevState, value];
@@ -64,19 +73,15 @@ export default function Filter() {
   };
 
   const selectAll = (e) => {
-    const { name, value } = e.target;
-    const setter = settersMap[name]; // get the corresponding setter
-
-    value ? setter({ ...animalType.breeds }) : setter([]);
+    const { name, checked } = e.target;
+    const setter = settersMap[name];
+    checked ? setter([...animalType.breeds]) : setter([]);
   };
-
-  console.log(JSON.stringify(settings));
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    // Construct the settings object:
-    const updatedType = {
+    const updatedTypeSettings = {
       breed: selectedBreeds,
       size: selectedSizes,
       gender: selectedGenders,
@@ -85,12 +90,9 @@ export default function Filter() {
       coat: selectedCoats,
       attributes: selectedAttributes,
     };
-
-    const updatedSettings = { ...settings, type: updatedType };
-
-    // Update the settings in the context:
-    console.log(updatedSettings);
+    const updatedSettings = { ...settings, [type]: updatedTypeSettings };
     setSettings(updatedSettings);
+    console.log("updated settings:", updatedSettings);
   };
 
   return (
@@ -113,8 +115,9 @@ export default function Filter() {
                     <Form.Check
                       type="checkbox"
                       name="breed"
-                      id={animalType + "-" + breed}
+                      value={breed}
                       label={breed}
+                      checked={selectedBreeds.includes(breed)}
                       onChange={handleCheckboxChange}
                     />
                   </Col>
@@ -135,7 +138,7 @@ export default function Filter() {
                   label={toTitleCase(size.replace("_", " "))}
                   name="size"
                   value={size}
-                  defaultChecked={selectedSizes.includes(size)}
+                  checked={selectedSizes.includes(size)}
                   onChange={handleCheckboxChange}
                 />
               ))}
@@ -154,7 +157,7 @@ export default function Filter() {
                   label={toTitleCase(gender.replace("_", " "))}
                   name="gender"
                   value={gender}
-                  defaultChecked={selectedGenders.includes(gender)}
+                  checked={selectedGenders.includes(gender)}
                   onChange={handleCheckboxChange}
                 />
               ))}
@@ -164,7 +167,6 @@ export default function Filter() {
         <AccordionItem eventKey="ages">
           <AccordionHeader>Ages</AccordionHeader>
           <AccordionBody>
-            {/* select for age */}
             <Form.Group>
               <Form.Label>Ages</Form.Label>
               {["baby", "young", "adult", "senior"].map((age) => (
@@ -173,13 +175,16 @@ export default function Filter() {
                   label={toTitleCase(age.replace("_", " "))}
                   name="age"
                   value={age}
-                  defaultChecked={selectedAges.includes(age)}
+                  checked={selectedAges.includes(age)}
                   onChange={handleCheckboxChange}
                 />
               ))}
             </Form.Group>
-
-            {/* select for color */}
+          </AccordionBody>
+        </AccordionItem>
+        <AccordionItem eventKey="colors">
+          <AccordionHeader>Colors</AccordionHeader>
+          <AccordionBody>
             <Form.Group>
               <Form.Label>Colors</Form.Label>
               {animalType.colors.map((color) => (
@@ -188,7 +193,7 @@ export default function Filter() {
                   label={toTitleCase(color.replace("_", " "))}
                   name="color"
                   value={color}
-                  defaultChecked={selectedColors.includes(color)}
+                  checked={selectedColors.includes(color)}
                   onChange={handleCheckboxChange}
                 />
               ))}
@@ -207,7 +212,7 @@ export default function Filter() {
                   label={toTitleCase(coat.replace("_", " "))}
                   name="coat"
                   value={coat}
-                  defaultChecked={selectedCoats.includes(coat)}
+                  checked={selectedCoats.includes(coat)}
                   onChange={handleCheckboxChange}
                 />
               ))}
@@ -227,7 +232,7 @@ export default function Filter() {
                     label={toTitleCase(attribute.replace("_", " "))}
                     name="attributes"
                     value={attribute}
-                    defaultChecked={selectedAttributes.includes(attribute)}
+                    checked={selectedAttributes.includes(attribute)}
                     onChange={handleCheckboxChange}
                   />
                 )
