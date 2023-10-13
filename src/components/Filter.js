@@ -82,22 +82,16 @@ export default function Filter() {
   };
 
     return (
-      <Accordion defaultActiveKey="">
-            <Accordion.Item eventKey={type}>
-              <Accordion.Header>{type}</Accordion.Header>
-              <Accordion.Body>
                 <Form>
                   {/* select for breeds */}
-                  <Form.Group controlId={type + '-breed'}>
+                  <Form.Group>
                     <Form.Check
                       type="switch"
-
-                      id={animalType + '-all-breeds'}
+                      name="breed"
                       label="Select all breeds"
                       reverse
                       onChange={selectAll}
                     />
-  
                     <Row md={4}>
                       {animalType.breeds.map(breed =>
                         <Col>
@@ -114,6 +108,13 @@ export default function Filter() {
   
                   {/* select for sizes */}
                   <Form.Group>
+                  <Form.Check
+                      type="switch"
+                      name="size"
+                      label="Select all sizes"
+                      reverse
+                      onChange={selectAll}
+                    />
                     <Form.Label>Sizes</Form.Label>
                     {["small", "medium", "large", "xlarge"].map((size) => (
                       <Form.Check
