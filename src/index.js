@@ -5,7 +5,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { DataProvider } from "./dataContext";
-import { app } from "./firebase";
 import { RouterProvider } from "react-router";
 import router from "./router";
 
@@ -17,7 +16,7 @@ root.render(
         <App />
       </RouterProvider>
     </DataProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
