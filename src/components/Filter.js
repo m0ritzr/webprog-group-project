@@ -38,6 +38,8 @@ export default function Filter() {
   const [selectedCoats, setSelectedCoats] = useState([]);
   const [selectedAttributes, setSelectedAttributes] = useState([]);
 
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
   useEffect(() => {
     const typeSettings = settings[type] || {};
 
@@ -48,6 +50,7 @@ export default function Filter() {
     setSelectedColors(typeSettings.color || []);
     setSelectedCoats(typeSettings.coat || []);
     setSelectedAttributes(typeSettings.attributes || []);
+    setSelectedCategories(typeSettings.selectedCategories || []);
   }, [settings, type]);
 
   const settersMap = {
@@ -58,6 +61,7 @@ export default function Filter() {
     color: setSelectedColors,
     coat: setSelectedCoats,
     attributes: setSelectedAttributes,
+    categories: setSelectedCategories,
   };
 
   const handleCheckboxChange = (e) => {
@@ -78,6 +82,12 @@ export default function Filter() {
     checked ? setter([...animalType.breeds]) : setter([]);
   };
 
+  const selectCategory = (e) => {
+    const { name, checked } = e.target;
+    const setter = settersMap["categories"];
+    checked ? setSelectedCategories([...selectedCategories, name]) : setter([selectedCategories.filter(category => category === name)]);
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
@@ -89,6 +99,7 @@ export default function Filter() {
       color: selectedColors,
       coat: selectedCoats,
       attributes: selectedAttributes,
+      categories: selectedCategories
     };
     const updatedSettings = { ...settings, [type]: updatedTypeSettings };
     setSettings(updatedSettings);
@@ -98,16 +109,19 @@ export default function Filter() {
   return (
     <Form onSubmit={handleFormSubmit}>
       <Accordion defaultActiveKey="breeds">
+
+        {/* select for breeds */}
         <AccordionItem eventKey="breeds">
           <Accordion.Header>Breeds</Accordion.Header>
           <AccordionBody>
             <Form.Group>
               <Form.Check
                 type="switch"
-                name="breed"
+                name="breeds"
                 label="Select all breeds"
                 reverse
-                onChange={selectAll}
+                checked={selectedCategories.includes("breeds")}
+                onChange={selectCategory}
               />
               <Row md={4}>
                 {animalType.breeds.map((breed) => (
@@ -117,6 +131,7 @@ export default function Filter() {
                       name="breed"
                       value={breed}
                       label={breed}
+                      disabled={selectedCategories.includes("breeds")}
                       checked={selectedBreeds.includes(breed)}
                       onChange={handleCheckboxChange}
                     />
@@ -126,117 +141,187 @@ export default function Filter() {
             </Form.Group>
           </AccordionBody>
         </AccordionItem>
+
+        {/* select for sizes */}
         <AccordionItem eventKey="sizes">
           <Accordion.Header>Sizes</Accordion.Header>
           <AccordionBody>
-            {/* select for sizes */}
             <Form.Group>
-              <Form.Label>Sizes</Form.Label>
-              {["small", "medium", "large", "xlarge"].map((size) => (
-                <Form.Check
-                  type="checkbox"
-                  label={toTitleCase(size.replace("_", " "))}
-                  name="size"
-                  value={size}
-                  checked={selectedSizes.includes(size)}
-                  onChange={handleCheckboxChange}
-                />
-              ))}
+              <Form.Check
+                type="switch"
+                name="sizes"
+                label="Select all sizes"
+                reverse
+                checked={selectedCategories.includes("sizes")}
+                onChange={selectCategory}
+              />
+              <Row md={4}>
+                {["small", "medium", "large", "xlarge"].map((size) => (
+                  <Form.Check
+                    type="checkbox"
+                    label={toTitleCase(size.replace("_", " "))}
+                    name="size"
+                    disabled={selectedCategories.includes("sizes")}
+                    value={size}
+                    checked={selectedSizes.includes(size)}
+                    onChange={handleCheckboxChange}
+                  />
+                ))}
+              </Row>
             </Form.Group>
           </AccordionBody>
         </AccordionItem>
+        {/* select for gender */}
         <AccordionItem eventKey="genders">
           <AccordionHeader>Genders</AccordionHeader>
           <AccordionBody>
-            {/* select for gender */}
             <Form.Group>
-              <Form.Label>Genders</Form.Label>
-              {animalType.genders.map((gender) => (
-                <Form.Check
-                  type="checkbox"
-                  label={toTitleCase(gender.replace("_", " "))}
-                  name="gender"
-                  value={gender}
-                  checked={selectedGenders.includes(gender)}
-                  onChange={handleCheckboxChange}
-                />
-              ))}
+              <Form.Check
+                type="switch"
+                name="genders"
+                label="Select all genders"
+                reverse
+                checked={selectedCategories.includes("genders")}
+                onChange={selectCategory}
+              />
+              <Row md={4}>
+                {animalType.genders.map((gender) => (
+                  <Form.Check
+                    type="checkbox"
+                    label={toTitleCase(gender.replace("_", " "))}
+                    name="gender"
+                    disabled={selectedCategories.includes("genders")}
+                    value={gender}
+                    checked={selectedGenders.includes(gender)}
+                    onChange={handleCheckboxChange}
+                  />
+                ))}
+              </Row>
             </Form.Group>
+
           </AccordionBody>
         </AccordionItem>
+
+        {/* select for ages */}
         <AccordionItem eventKey="ages">
           <AccordionHeader>Ages</AccordionHeader>
           <AccordionBody>
             <Form.Group>
-              <Form.Label>Ages</Form.Label>
-              {["baby", "young", "adult", "senior"].map((age) => (
-                <Form.Check
-                  type="checkbox"
-                  label={toTitleCase(age.replace("_", " "))}
-                  name="age"
-                  value={age}
-                  checked={selectedAges.includes(age)}
-                  onChange={handleCheckboxChange}
-                />
-              ))}
+
+              <Form.Check
+                type="switch"
+                name="ages"
+                label="Select all ages"
+                reverse
+                checked={selectedCategories.includes("ages")}
+                onChange={selectCategory}
+              />
+              <Row md={4}>
+                {["baby", "young", "adult", "senior"].map((age) => (
+                  <Form.Check
+                    type="checkbox"
+                    label={toTitleCase(age.replace("_", " "))}
+                    name="age"
+                    disabled={selectedCategories.includes("ages")}
+                    value={age}
+                    checked={selectedAges.includes(age)}
+                    onChange={handleCheckboxChange}
+                  />
+                ))}
+              </Row>
             </Form.Group>
           </AccordionBody>
         </AccordionItem>
+
+        {/* select for colours */}
         <AccordionItem eventKey="colors">
           <AccordionHeader>Colors</AccordionHeader>
           <AccordionBody>
             <Form.Group>
-              <Form.Label>Colors</Form.Label>
-              {animalType.colors.map((color) => (
-                <Form.Check
-                  type="checkbox"
-                  label={toTitleCase(color.replace("_", " "))}
-                  name="color"
-                  value={color}
-                  checked={selectedColors.includes(color)}
-                  onChange={handleCheckboxChange}
-                />
-              ))}
+              <Form.Check
+                type="switch"
+                name="colours"
+                label="Select all colours"
+                reverse
+                checked={selectedCategories.includes("colours")}
+                onChange={selectCategory}
+              />
+              <Row md={4}>
+                {animalType.colors.map((color) => (
+                  <Form.Check
+                    type="checkbox"
+                    label={toTitleCase(color.replace("_", " "))}
+                    name="color"
+                    disabled={selectedCategories.includes("colours")}
+                    value={color}
+                    checked={selectedColors.includes(color)}
+                    onChange={handleCheckboxChange}
+                  />
+                ))}
+              </Row>
             </Form.Group>
           </AccordionBody>
         </AccordionItem>
+
+        {/* select for coat */}
         <AccordionItem eventKey="coats">
           <AccordionHeader>Coats</AccordionHeader>
           <AccordionBody>
-            {/* select for coat */}
             <Form.Group>
-              <Form.Label>Coats</Form.Label>
-              {animalType.coats.map((coat) => (
-                <Form.Check
-                  type="checkbox"
-                  label={toTitleCase(coat.replace("_", " "))}
-                  name="coat"
-                  value={coat}
-                  checked={selectedCoats.includes(coat)}
-                  onChange={handleCheckboxChange}
-                />
-              ))}
+              <Form.Check
+                type="switch"
+                name="coats"
+                label="Select all coats"
+                reverse
+                checked={selectedCategories.includes("coats")}
+                onChange={selectCategory}
+              />
+              <Row md={4}>
+                {animalType.coats.map((coat) => (
+                  <Form.Check
+                    type="checkbox"
+                    label={toTitleCase(coat.replace("_", " "))}
+                    name="coat"
+                    disabled={selectedCategories.includes("coats")}
+                    value={coat}
+                    checked={selectedCoats.includes(coat)}
+                    onChange={handleCheckboxChange}
+                  />
+                ))}
+              </Row>
             </Form.Group>
           </AccordionBody>
         </AccordionItem>
+
+        {/* select for attributes */}
         <AccordionItem eventKey="attributes">
           <AccordionHeader>Attributes</AccordionHeader>
           <AccordionBody>
-            {/* select for attributes */}
             <Form.Group>
-              <Form.Label>Attributes</Form.Label>
-              {["spayed_neutered", "house_trained", "special_needs"].map(
-                (attribute) => (
-                  <Form.Check
-                    type="checkbox"
-                    label={toTitleCase(attribute.replace("_", " "))}
-                    name="attributes"
-                    value={attribute}
-                    checked={selectedAttributes.includes(attribute)}
-                    onChange={handleCheckboxChange}
-                  />
-                )
-              )}
+              <Form.Check
+                type="switch"
+                name="attributes"
+                label="Select all attributes"
+                reverse
+                checked={selectedCategories.includes("attributes")}
+
+                onChange={selectCategory}
+              />
+              <Row md={4}>
+                {["spayed_neutered", "house_trained", "special_needs"].map(
+                  (attribute) => (
+                    <Form.Check
+                      type="checkbox"
+                      label={toTitleCase(attribute.replace("_", " "))}
+                      name="attributes"
+                      disabled={selectedCategories.includes("attributes")}
+                      value={attribute}
+                      checked={selectedAttributes.includes(attribute)}
+                      onChange={handleCheckboxChange}
+                    />
+                  )
+                )}
+              </Row>
             </Form.Group>
           </AccordionBody>
         </AccordionItem>
