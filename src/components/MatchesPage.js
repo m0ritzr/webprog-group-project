@@ -46,7 +46,7 @@ function MatchesPage() {
     loadPets();
   }, [matches]);
 
-  function handleUnmatch(e, petData) {
+  function handleUnmatch(petData) {
     const newMatches = matches.filter((m) => m !== petData.id);
     const newDeclined = [...declined, petData.id];
     setMatches(newMatches);
