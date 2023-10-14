@@ -109,7 +109,7 @@ function MatchCard({
     >
       <Image
         className="w-25 h-100 object-fit-cover p-2"
-        src={petData.photos[0].medium}
+        src={petData.photos[0]?.medium || "./tmpimgs/no_image.jpg"} // Added missing photo case
         rounded
       />
 

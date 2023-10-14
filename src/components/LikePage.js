@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { Button, Card, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import { useData } from "../dataContext";
 import { fetchAnimals } from "../petfinder";
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
+
+import SimpleBadge from "./subcomponents/SimpleBadge";
+
+// TODO
+// Format description, (&amp; etc...)
+// The description isn't the full description?
+// Add padding between badges
+
+// Add check for duplicate matches/declines, also in a way that limits api calls...
+// Figure out how to deal with animals without pictures while limiting the api calls...
+
 
 function LikePage() {
   // eslint-disable-next-line no-unused-vars
@@ -10,61 +21,52 @@ function LikePage() {
 
   const [pets, setPets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // change to true
+  const LIST_MIN = 10;
 
   const settingsForType = React.useMemo(
     () => ({ type: settings.type, ...settings[settings.type] }),
     [settings]
   );
-  console.log("settings for type:", settingsForType);
-
-  const fetchMorePets = useCallback(async () => {
-    setIsLoading(true);
-
-    console.log(settingsForType);
-    const animals = await fetchAnimals({
+  //console.log("settings for type:", settingsForType);
+  console.log("matches: ", matches)
+  console.log("loaded pets: ", pets)
+  console.log("current page: ", currentPage)
+  
+  async function fetchMorePets() {
+    const response = await fetchAnimals({
       ...settingsForType,
       page: currentPage,
-    });
-    const animalsWithPhotos = animals.animals.filter(
-      (animal) => animal.photos.length !== 0
-    );
-    const uniqueAnimals = animalsWithPhotos.filter(
-      (animal) => !matches.includes(animal.id) && !declined.includes(animal.id)
-    );
+    })
+    console.log("fetched animals", response.animals)
+    setPets([...pets, ...response.animals])
+    setCurrentPage(currentPage + 1)
+  }
 
-    setPets((prevPets) => [...prevPets, ...uniqueAnimals]);
-    setIsLoading(false);
-  }, [settingsForType, currentPage, matches, declined]);
 
+  // Fetches more animals if needed when pets is updated changes
+  // Also called on first render
   useEffect(() => {
-    if (Object.keys(settingsForType).length !== 0 && !pets.length) {
-      fetchMorePets();
+    pets.length ? setIsLoading(false) : setIsLoading(true);
+    if(pets.length < LIST_MIN) {
+      fetchMorePets()
     }
-  }, [pets, fetchMorePets, settingsForType]);
+  }, [pets])
 
   function handleLikeClick() {
-    if (pets.length) {
-      setMatches([...matches, pets[0].id]);
-      setPets(pets.slice(1));
+    if(pets.length){
+      setMatches([...matches, pets[0].id])
+      setPets(pets.slice(1))
     }
   }
-
   function handleDislikeClick() {
-    if (pets.length) {
-      setDeclined([...declined, pets[0].id]);
-      setPets(pets.slice(1));
+    if(pets.length){
+      setDeclined([...declined, pets[0].id])
+      setPets(pets.slice(1))
     }
   }
 
-  useEffect(() => {
-    if (!pets.length) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  }, [pets]);
 
-  // TODO, make height fit the screen
-  // Stop container from changing size when image is changes
   return (
     <div className="container-sm p-3">
       <h2>Like Pets</h2>
@@ -76,17 +78,24 @@ function LikePage() {
           <Card.Img
             className="w-100 h-75 object-fit-cover"
             variant="top"
-            src={pets[0]?.photos[0].large || ""}
+            src={pets[0]?.photos[0]?.large || "./tmpimgs/no_image.jpg"}
           />
         )}
 
         <Card.Body className="h-25">
           <Card.Title>
-            {isLoading ? "Loading..." : pets[0]?.name || "Pet Name"}
+            {isLoading ? "Loading..." : pets[0]?.name || "Pet name missing"}
           </Card.Title>
           <Card.Text>
-            {isLoading ? "Loading..." : pets[0]?.description || "Description"}
+            {isLoading ? "Loading..." : pets[0]?.description || "Description missing"}
           </Card.Text>
+          {/** add padding between tags */}
+          {pets[0]?.species ? <SimpleBadge property={`${pets[0].species} - ${pets[0].breeds.primary}`} icon="species"/> : null /** doesnt check both */} 
+          {pets[0]?.age ? <SimpleBadge property={pets[0].age} icon="age"/> : null}
+          {pets[0]?.gender ? <SimpleBadge property={pets[0].gender} icon="gender"/> : null}
+          {pets[0]?.size ? <SimpleBadge property={pets[0].size} icon="size"/> : null}
+          {pets[0]?.contact ? <SimpleBadge property={`${pets[0].contact.address.city}, ${pets[0].contact.address.state}`} icon="address"/> : null /** doesnt check both */}
+          {pets[0]?.tags.length > 0 ? <SimpleBadge property={pets[0].tags.join(", ")} icon="tags"/> : null}
           <div className="col">
             <Button
               variant="success"

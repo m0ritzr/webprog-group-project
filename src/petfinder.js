@@ -56,7 +56,6 @@ export async function fetchAnimalBreeds(type) {
 
 function convertSettingsToQueryParams(settings) {
   let queryParams = {};
-
   const convertArrayToString = (array) => array.join(",");
 
   for (let key in settings) {
@@ -73,9 +72,12 @@ function convertSettingsToQueryParams(settings) {
       value = convertArrayToString(value);
     }
 
-    if (value && value.length > 0) {
+    // For page:n, where n is an integer, n.length becomes undefined and thus isn't included in the final query
+    // value is convered toString() to always have a length property
+    if (value && value.toString().length > 0) {
       queryParams[key] = value.toString();
     }
+
   }
   return queryParams;
 }
