@@ -23,6 +23,7 @@ export const DataProvider = ({ children }) => {
     useState(false);
 
   const [showLogout, setShowLogout] = useState(false); // added
+  const [showCreateAccount, setShowCreateAccount] = useState(false);
 
   useEffect(() => {
     if (uid && isLoggedIn) {
@@ -134,6 +135,8 @@ export const DataProvider = ({ children }) => {
     setUid,
     showLogout, // added
     setShowLogout, // added
+    showCreateAccount, // only needed on start page, whats a better solution?
+    setShowCreateAccount,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

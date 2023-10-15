@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useData } from "../dataContext";
 import { CloseButton } from "react-bootstrap";
 
-function LogoutPopup({ showPopup }) {
-  const { showLogout, setShowLogout, isLoggedIn, setIsLoggedIn } = useData();
+function LogoutPopup() {
+  const { showLogout, setShowLogout, setIsLoggedIn } = useData();
   const handleClose = () => setShowLogout(false);
   const handleLogout = () => {
     setIsLoggedIn(false);
