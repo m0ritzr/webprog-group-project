@@ -29,10 +29,10 @@ function iconSelector(icon) {
 
 function SimpleBadge({property, icon}) {
     return(
-        <Badge variant="dark">
-        {iconSelector(icon)}
-        {property}
-      </Badge>
+        <Badge variant="dark" className="mb-3 me-3">
+          {iconSelector(icon)}
+          {property}
+        </Badge>
     )
 }
 

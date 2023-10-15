@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { useData } from "../dataContext";
 import { fetchAnimals } from "../petfinder";
 import { useEffect } from "react";
@@ -90,12 +90,16 @@ function LikePage() {
             {isLoading ? "Loading..." : pets[0]?.description || "Description missing"}
           </Card.Text>
           {/** add padding between tags */}
-          {pets[0]?.species ? <SimpleBadge property={`${pets[0].species} - ${pets[0].breeds.primary}`} icon="species"/> : null /** doesnt check both */} 
-          {pets[0]?.age ? <SimpleBadge property={pets[0].age} icon="age"/> : null}
-          {pets[0]?.gender ? <SimpleBadge property={pets[0].gender} icon="gender"/> : null}
-          {pets[0]?.size ? <SimpleBadge property={pets[0].size} icon="size"/> : null}
-          {pets[0]?.contact ? <SimpleBadge property={`${pets[0].contact.address.city}, ${pets[0].contact.address.state}`} icon="address"/> : null /** doesnt check both */}
-          {pets[0]?.tags.length > 0 ? <SimpleBadge property={pets[0].tags.join(", ")} icon="tags"/> : null}
+            <Row>
+              <Col>
+                {pets[0]?.species ? <SimpleBadge property={`${pets[0].species} - ${pets[0].breeds.primary}`} icon="species"/> : null /** doesnt check both */} 
+                {pets[0]?.age ? <SimpleBadge property={pets[0].age} icon="age"/> : null}
+                {pets[0]?.gender ? <SimpleBadge property={pets[0].gender} icon="gender"/> : null}
+                {pets[0]?.size ? <SimpleBadge property={pets[0].size} icon="size"/> : null}
+                {pets[0]?.contact ? <SimpleBadge property={`${pets[0].contact.address.city}, ${pets[0].contact.address.state}`} icon="address"/> : null /** doesnt check both */}
+                {pets[0]?.tags.length > 0 ? <SimpleBadge property={pets[0].tags.join(", ")} icon="tags"/> : null}
+              </Col>
+            </Row>
           <div className="col">
             <Button
               variant="success"
