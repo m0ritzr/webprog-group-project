@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useData } from "../dataContext";
-import { Button, Form, Container } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Container,
+  Col,
+  Row,
+  ButtonGroup,
+} from "react-bootstrap";
 import {
   signInWithEmailAndPassword,
   setPersistence,
@@ -8,11 +15,12 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { useToasts } from "../ToastContext";
+import CreateAccountPopup from "./CreateAccountPopup";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn, setUid } = useData();
+  const { setIsLoggedIn, setUid, setShowCreateAccount } = useData();
   const { addToast } = useToasts();
 
   const handleLogin = async () => {
@@ -40,8 +48,19 @@ function Login() {
     }
   };
 
+  function handleKeyPress(target) {
+    if (target.key === "Enter") {
+      handleLogin();
+    }
+  }
+
+  function handleCreateAccountClick() {
+    setShowCreateAccount(true);
+  }
+
   return (
     <Container className="mt-5">
+      <CreateAccountPopup />
       <Form>
         <Form.Group>
           <Form.Label>Email</Form.Label>
@@ -59,10 +78,18 @@ function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => handleKeyPress(e)}
           />
         </Form.Group>
-        <Button variant="primary" onClick={handleLogin}>
+        <Button className="me-3 mt-3" variant="primary" onClick={handleLogin}>
           Login
+        </Button>
+        <Button
+          className="mt-3"
+          variant="secondary"
+          onClick={handleCreateAccountClick}
+        >
+          Create account
         </Button>
       </Form>
     </Container>

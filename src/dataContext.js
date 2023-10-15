@@ -22,6 +22,9 @@ export const DataProvider = ({ children }) => {
   const [isAnimalTypesDictInitialized, setIsAnimalTypesDictInitialized] =
     useState(false);
 
+  const [showLogout, setShowLogout] = useState(false); // added
+  const [showCreateAccount, setShowCreateAccount] = useState(false);
+
   useEffect(() => {
     if (uid && isLoggedIn) {
       // Fetch data from Firebase when user logs in
@@ -130,6 +133,10 @@ export const DataProvider = ({ children }) => {
     setIsLoggedIn,
     uid,
     setUid,
+    showLogout, // added
+    setShowLogout, // added
+    showCreateAccount, // only needed on start page, whats a better solution?
+    setShowCreateAccount,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
