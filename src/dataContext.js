@@ -22,6 +22,8 @@ export const DataProvider = ({ children }) => {
   const [isAnimalTypesDictInitialized, setIsAnimalTypesDictInitialized] =
     useState(false);
 
+  const [showLogout, setShowLogout] = useState(false); // added
+
   useEffect(() => {
     if (uid && isLoggedIn) {
       // Fetch data from Firebase when user logs in
@@ -130,6 +132,8 @@ export const DataProvider = ({ children }) => {
     setIsLoggedIn,
     uid,
     setUid,
+    showLogout, // added
+    setShowLogout, // added
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
