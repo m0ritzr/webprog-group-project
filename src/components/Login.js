@@ -40,6 +40,12 @@ function Login() {
     }
   };
 
+  function handleKeyPress(target) {
+    if (target.key === "Enter") {
+      handleLogin();
+    }
+  }
+
   return (
     <Container className="mt-5">
       <Form>
@@ -59,6 +65,7 @@ function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => handleKeyPress(e)}
           />
         </Form.Group>
         <Button variant="primary" onClick={handleLogin}>
