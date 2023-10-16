@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap";
 import { auth } from "../firebase";
-import { updatePassword } from "firebase/auth";
+import { updatePassword, deleteUser } from "firebase/auth";
+import { useData } from "../dataContext";
 
 function AccountSettings() {
+  const { setIsLoggedIn } = useData();
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
 
@@ -20,6 +22,13 @@ function AccountSettings() {
           alert(error);
         });
     }
+  }
+
+  function handleDeleteUser() {
+    const user = auth.currentUser;
+    deleteUser(user).then(() => {
+      setIsLoggedIn(false);
+    });
   }
 
   return (
@@ -46,9 +55,14 @@ function AccountSettings() {
           />
         </Form.Group>
       </Form>
-      <Button className="mt-3" onClick={handlePasswordChange}>
-        Change Password
-      </Button>
+      <div className="vstack gap-3 col-md-2">
+        <Button className="mt-3" onClick={handlePasswordChange}>
+          Change Password
+        </Button>
+        <Button variant="danger" onClick={handleDeleteUser}>
+          Delete Account
+        </Button>
+      </div>
     </div>
   );
 }
