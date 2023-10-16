@@ -28,7 +28,7 @@ function ResetPasswordPopup() {
   return (
     <Modal show={showPasswordReset}>
       <Modal.Header>
-        <Modal.Title>Create Account</Modal.Title>
+        <Modal.Title>Reset Password</Modal.Title>
         <CloseButton onClick={handleClose} />
       </Modal.Header>
       <Modal.Body>
