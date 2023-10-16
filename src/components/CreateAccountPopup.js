@@ -4,14 +4,42 @@ import { useData } from "../dataContext";
 import { CloseButton } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
+import { auth } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 function CreateAccountPopup() {
-  const { showCreateAccount, setShowCreateAccount } = useData();
+  const { showCreateAccount, setShowCreateAccount, setIsLoggedIn, setUid } =
+    useData();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
 
   const handleClose = () => setShowCreateAccount(false);
+
+  function handleCreateAccount() {
+    if (password !== rePassword) {
+      alert("Passwords don't match");
+    } else {
+      createAccount();
+    }
+  }
+
+  function createAccount() {
+    //const auth = {auth};
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        setIsLoggedIn(true);
+        setUid(user.uid);
+        // console.log(user); // log
+        handleClose();
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(`${errorCode} : ${errorMessage}`);
+      });
+  }
 
   return (
     <Modal show={showCreateAccount}>
@@ -54,7 +82,7 @@ function CreateAccountPopup() {
         <Button variant="danger" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleClose}>
+        <Button variant="primary" onClick={handleCreateAccount}>
           Create account
         </Button>
       </Modal.Footer>
