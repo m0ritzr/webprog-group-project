@@ -6,6 +6,7 @@ import MatchesPage from "./components/MatchesPage";
 import Login from "./components/Login";
 import Filter from "./components/Filter";
 import Profile from "./components/Profile";
+import AccountSettings from "./components/AccountSettings";
 
 import { useData } from "./dataContext";
 import { Navigate } from "react-router-dom";
@@ -44,11 +45,11 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: 
-            <ProtectedRoute>
-                <Profile />              
-            </ProtectedRoute>
-              
+            element: (
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            ),
           },
           {
             path: "profile",
@@ -77,6 +78,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <MatchesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "account-settings",
+        element: (
+          <ProtectedRoute>
+            <AccountSettings />
           </ProtectedRoute>
         ),
       },
