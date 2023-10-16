@@ -16,11 +16,13 @@ import {
 import { auth } from "../firebase";
 import { useToasts } from "../ToastContext";
 import CreateAccountPopup from "./CreateAccountPopup";
+import ResetPasswordPopup from "./ResetPasswordPopup";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn, setUid, setShowCreateAccount } = useData();
+  const { setIsLoggedIn, setUid, setShowCreateAccount, setShowPasswordReset } =
+    useData();
   const { addToast } = useToasts();
 
   const handleLogin = async () => {
@@ -58,8 +60,13 @@ function Login() {
     setShowCreateAccount(true);
   }
 
+  function handlePasswordReset() {
+    setShowPasswordReset(true);
+  }
+
   return (
     <Container className="mt-5">
+      <ResetPasswordPopup />
       <CreateAccountPopup />
       <Form>
         <Form.Group>
@@ -85,11 +92,18 @@ function Login() {
           Login
         </Button>
         <Button
-          className="mt-3"
+          className="mt-3 me-3"
           variant="secondary"
           onClick={handleCreateAccountClick}
         >
           Create account
+        </Button>
+        <Button
+          className="mt-3"
+          variant="secondary"
+          onClick={handlePasswordReset}
+        >
+          Reset Password
         </Button>
       </Form>
     </Container>
