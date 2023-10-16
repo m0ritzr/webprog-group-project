@@ -4,10 +4,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { DataProvider } from "./dataContext";
+import { DataProvider } from "./context/dataContext";
 import { RouterProvider } from "react-router";
 import router from "./router";
-import { ToastProvider } from "./ToastContext";
+import { ToastProvider } from "./context/ToastContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

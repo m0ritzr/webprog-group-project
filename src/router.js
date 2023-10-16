@@ -8,7 +8,7 @@ import Filter from "./components/Filter";
 import Profile from "./components/Profile";
 import AccountSettings from "./components/AccountSettings";
 
-import { useData } from "./dataContext";
+import { useData } from "./context/dataContext";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {

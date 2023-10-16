@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap";
-import { auth } from "../firebase";
+import { Button, Form } from "react-bootstrap";
+import { auth } from "../api/firebase";
 import { updatePassword, deleteUser } from "firebase/auth";
-import { useData } from "../dataContext";
+import { useData } from "../context/dataContext";
+import { useToasts } from "../context/ToastContext";
 
 function AccountSettings() {
   const { setIsLoggedIn } = useData();
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
+
+  const { addToast } = useToasts();
 
   function handlePasswordChange() {
     if (password !== rePassword) {
@@ -16,7 +19,12 @@ function AccountSettings() {
       const user = auth.currentUser;
       updatePassword(user, password)
         .then(() => {
-          console.log("password updated"); // log
+          addToast({
+            id: `password-changed-${Date.now()}`,
+            title: `Password changed`,
+            message: `Successfully changed password`,
+            type: "alert-success",
+          });
         })
         .catch((error) => {
           alert(error);
@@ -46,7 +54,7 @@ function AccountSettings() {
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label>Retype passwore</Form.Label>
+          <Form.Label>Enter Password Again</Form.Label>
           <Form.Control
             type="password"
             placeholder="Password"

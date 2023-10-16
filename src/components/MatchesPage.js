@@ -1,18 +1,12 @@
 import { React, useEffect, useState } from "react";
-import { Button, Card, Badge, Image, Row, Col, Modal } from "react-bootstrap";
-import { useData } from "../dataContext";
-import { fetchAnimal } from "../petfinder";
-import { useToasts } from "../ToastContext";
-import {
-  FaVenusMars,
-  FaPaw,
-  FaBirthdayCake,
-  FaTag,
-  FaMapMarkerAlt,
-  FaRuler,
-} from "react-icons/fa";
+import { Button, Card, Image, Row, Col } from "react-bootstrap";
+import { useData } from "../context/dataContext";
+import { fetchAnimal } from "../api/petfinder";
+import { useToasts } from "../context/ToastContext";
+import ContactAnimalPopup from "./popups/ContactAnimalPopup";
+import SimpleBadge from "./subcomponents/SimpleBadge";
 
-function MatchesPage() {
+export default function MatchesPage() {
   // eslint-disable-next-line no-unused-vars
   const { matches, declined, setMatches, setDeclined } = useData();
   const [loadedPetsData, setLoadedPetsData] = useState([]);
@@ -38,7 +32,6 @@ function MatchesPage() {
 
       await Promise.all(promises);
 
-      console.log(loadedPetsObj);
       setLoadedPetsData(loadedPetsObj);
       setIsLoading(false);
     };
@@ -51,8 +44,6 @@ function MatchesPage() {
     const newDeclined = [...declined, petData.id];
     setMatches(newMatches);
     setDeclined(newDeclined);
-
-    console.log("Unmatched with", petData.name);
 
     addToast({
       id: `match-removed-${petData.id}`,
@@ -87,7 +78,7 @@ function MatchesPage() {
           />
         ))
       )}
-      <ContactModal
+      <ContactAnimalPopup
         show={showModal}
         contact={selectedPetContact}
         onClose={handleCloseModal}
@@ -144,55 +135,35 @@ function MatchCard({
 
         <Row>
           <Col className="d-flex flex-column align-items-left mb-2">
-            <Badge variant="dark" className="mb-2">
-              <FaPaw
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
+            {petData.species ? (
+              <SimpleBadge
+                property={`${petData.species} - ${petData.breeds.primary}`}
+                icon="species"
               />
-              {petData.species} - {petData.breeds.primary}
-            </Badge>
-            <Badge variant="dark">
-              <FaRuler
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
-              />
-              {petData.size}
-            </Badge>
+            ) : null}
+            {petData.size ? (
+              <SimpleBadge property={petData.size} icon="size" />
+            ) : null}
           </Col>
 
           <Col className="d-flex flex-column align-items-left mb-2">
-            <Badge variant="dark" className="mb-2">
-              <FaBirthdayCake
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
+            {petData.age ? (
+              <SimpleBadge property={petData.age} icon="age" />
+            ) : null}
+            {petData.contact ? (
+              <SimpleBadge
+                property={`${petData.contact.address.city}, ${petData.contact.address.state}`}
+                icon="address"
               />
-              {petData.age}
-            </Badge>
-            <Badge variant="dark">
-              <FaMapMarkerAlt
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
-              />
-              {petData.contact.address.city}, {petData.contact.address.state}
-            </Badge>
+            ) : null}
           </Col>
 
           <Col className="d-flex flex-column align-items-left mb-2">
-            <Badge variant="dark" className="mb-2">
-              <FaVenusMars
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
-              />
-              {petData.gender}
-            </Badge>
+            {petData.gender ? (
+              <SimpleBadge property={petData.gender} icon="gender" />
+            ) : null}
             {petData.tags.length ? (
-              <Badge variant="dark">
-                <FaTag
-                  style={{ color: "white", marginRight: "5px" }}
-                  className="mr-1"
-                />
-                {petData.tags.join(", ")}
-              </Badge>
+              <SimpleBadge property={petData.tags.join(", ")} icon="tags" />
             ) : null}
           </Col>
         </Row>
@@ -200,60 +171,3 @@ function MatchCard({
     </Card>
   );
 }
-
-function ContactModal({ show, contact, onClose }) {
-  return (
-    <Modal show={show} onHide={onClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Contact Details</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {contact.email && (
-          <Row
-            className="d-flex flex-row justify-content-between h-50"
-            style={{ margin: "5px" }}
-          >
-            <span className="w-75">
-              <strong>Email:</strong> {contact.email}
-            </span>
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                window.location.href = `mailto:${contact.email}`;
-              }}
-              className="ml-2 w-25"
-            >
-              Send Email
-            </Button>
-          </Row>
-        )}
-        {contact.phone && (
-          <Row
-            className="d-flex flex-row justify-content-between h-50"
-            style={{ margin: "5px" }}
-          >
-            <span className="w-75">
-              <strong>Phone:</strong> {contact.phone}
-            </span>
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                navigator.clipboard.writeText(contact.phone);
-              }}
-              className="ml-2 w-25"
-            >
-              Copy Phone
-            </Button>
-          </Row>
-        )}
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-}
-
-export default MatchesPage;

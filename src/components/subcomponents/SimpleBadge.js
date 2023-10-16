@@ -9,32 +9,33 @@ import {
 } from "react-icons/fa";
 
 function iconSelector(icon) {
-  const STYLE = {color: "white", marginRight: "5px"}
-  const CN = "mr-1"
+  const STYLE = { color: "white", marginRight: "5px" };
+  const CN = "mr-1";
   switch (icon) {
     case "size":
-      return (<FaRuler style={STYLE} className={CN}/>)
+      return <FaRuler style={STYLE} className={CN} />;
     case "species":
-      return(<FaPaw style={STYLE} className={CN}/>)
+      return <FaPaw style={STYLE} className={CN} />;
     case "age":
-      return(<FaBirthdayCake style={STYLE} className={CN}/>)
+      return <FaBirthdayCake style={STYLE} className={CN} />;
     case "address":
-      return(<FaMapMarkerAlt style={STYLE} className={CN}/>)
+      return <FaMapMarkerAlt style={STYLE} className={CN} />;
     case "gender":
-      return(<FaVenusMars style={STYLE} className={CN}/>)
+      return <FaVenusMars style={STYLE} className={CN} />;
     case "tags":
-      return(<FaTag style={STYLE} className={CN}/>)
+      return <FaTag style={STYLE} className={CN} />;
+    default:
+      return null;
   }
 }
 
-function SimpleBadge({property, icon}) {
-    return(
-        <Badge variant="dark" className="mb-3 me-3">
-          {iconSelector(icon)}
-          {property}
-        </Badge>
-    )
+function SimpleBadge({ property, icon }) {
+  return (
+    <Badge variant="dark" className="mb-3 me-3">
+      {iconSelector(icon)}
+      {property}
+    </Badge>
+  );
 }
-
 
 export default SimpleBadge;
