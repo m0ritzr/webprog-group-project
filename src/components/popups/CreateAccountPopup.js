@@ -1,20 +1,17 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useData } from "../dataContext";
+import { useData } from "../../context/dataContext";
 import { CloseButton } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
-import { auth } from "../firebase";
+import { auth } from "../../api/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-function CreateAccountPopup() {
-  const { showCreateAccount, setShowCreateAccount, setIsLoggedIn, setUid } =
-    useData();
+function CreateAccountPopup({ show, onClose }) {
+  const { setIsLoggedIn, setUid } = useData();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
-
-  const handleClose = () => setShowCreateAccount(false);
 
   function handleCreateAccount() {
     if (password !== rePassword) {
@@ -32,7 +29,7 @@ function CreateAccountPopup() {
         setIsLoggedIn(true);
         setUid(user.uid);
         // console.log(user); // log
-        handleClose();
+        onClose();
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -42,10 +39,10 @@ function CreateAccountPopup() {
   }
 
   return (
-    <Modal show={showCreateAccount}>
+    <Modal show={show} onHide={onClose}>
       <Modal.Header>
         <Modal.Title>Create Account</Modal.Title>
-        <CloseButton onClick={handleClose} />
+        <CloseButton onClick={onClose} />
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -79,7 +76,7 @@ function CreateAccountPopup() {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={handleClose}>
+        <Button variant="danger" onClick={onClose}>
           Cancel
         </Button>
         <Button variant="primary" onClick={handleCreateAccount}>

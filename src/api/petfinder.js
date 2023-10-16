@@ -4,7 +4,7 @@ import { getIdToken } from "firebase/auth";
 async function fetchFromCloudFunction(endpoint, queryParams = {}) {
   const url = new URL(endpoint);
   Object.keys(queryParams).forEach((key) =>
-    url.searchParams.append(key, queryParams[key]),
+    url.searchParams.append(key, queryParams[key])
   );
 
   const idToken = await getIdToken(auth.currentUser);
@@ -20,7 +20,7 @@ async function fetchFromCloudFunction(endpoint, queryParams = {}) {
   });
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch from Cloud Function: ${endpoint}. Status: ${response.status}`,
+      `Failed to fetch from Cloud Function: ${endpoint}. Status: ${response.status}`
     );
   }
 
@@ -37,20 +37,20 @@ export async function fetchAnimal(id) {
 export async function fetchAnimals(settings) {
   return fetchFromCloudFunction(
     "https://fetchanimals-m65pqwyajq-uc.a.run.app",
-    convertSettingsToQueryParams(settings),
+    convertSettingsToQueryParams(settings)
   );
 }
 
 export async function fetchAnimalTypes() {
   return fetchFromCloudFunction(
-    "https://fetchanimaltypes-m65pqwyajq-uc.a.run.app",
+    "https://fetchanimaltypes-m65pqwyajq-uc.a.run.app"
   );
 }
 
 export async function fetchAnimalBreeds(type) {
   return fetchFromCloudFunction(
     "https://fetchanimalbreeds-m65pqwyajq-uc.a.run.app",
-    { type },
+    { type }
   );
 }
 
@@ -77,7 +77,6 @@ function convertSettingsToQueryParams(settings) {
     if (value && value.toString().length > 0) {
       queryParams[key] = value.toString();
     }
-
   }
   return queryParams;
 }

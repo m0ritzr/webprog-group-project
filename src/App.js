@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
-import { useData } from "./dataContext";
+import { useData } from "./context/dataContext";
 import Login from "./components/Login";
 import { Outlet, useNavigation } from "react-router-dom";
 import { Spinner } from "react-bootstrap";

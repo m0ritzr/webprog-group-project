@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { db } from "./firebase";
+import { db } from "../api/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { fetchAnimalTypes, fetchAnimalBreeds } from "./petfinder";
+import { fetchAnimalTypes, fetchAnimalBreeds } from "../api/petfinder";
 
 const DataContext = createContext();
 
@@ -21,9 +21,6 @@ export const DataProvider = ({ children }) => {
   const [isAnimalsInitialized, setIsAnimalsInitialized] = useState(false);
   const [isAnimalTypesDictInitialized, setIsAnimalTypesDictInitialized] =
     useState(false);
-
-  const [showLogout, setShowLogout] = useState(false); // added
-  const [showCreateAccount, setShowCreateAccount] = useState(false);
 
   useEffect(() => {
     if (uid && isLoggedIn) {
@@ -133,10 +130,6 @@ export const DataProvider = ({ children }) => {
     setIsLoggedIn,
     uid,
     setUid,
-    showLogout, // added
-    setShowLogout, // added
-    showCreateAccount, // only needed on start page, whats a better solution?
-    setShowCreateAccount,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

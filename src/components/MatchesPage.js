@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from "react";
-import { Button, Card, Badge, Image, Row, Col, Modal } from "react-bootstrap";
-import { useData } from "../dataContext";
-import { fetchAnimal } from "../petfinder";
-import { useToasts } from "../ToastContext";
+import { Button, Card, Badge, Image, Row, Col } from "react-bootstrap";
+import { useData } from "../context/dataContext";
+import { fetchAnimal } from "../api/petfinder";
+import { useToasts } from "../context/ToastContext";
 import {
   FaVenusMars,
   FaPaw,
@@ -11,8 +11,9 @@ import {
   FaMapMarkerAlt,
   FaRuler,
 } from "react-icons/fa";
+import ContactAnimalPopup from "./popups/ContactAnimalPopup";
 
-function MatchesPage() {
+export default function MatchesPage() {
   // eslint-disable-next-line no-unused-vars
   const { matches, declined, setMatches, setDeclined } = useData();
   const [loadedPetsData, setLoadedPetsData] = useState([]);
@@ -87,7 +88,7 @@ function MatchesPage() {
           />
         ))
       )}
-      <ContactModal
+      <ContactAnimalPopup
         show={showModal}
         contact={selectedPetContact}
         onClose={handleCloseModal}
@@ -200,60 +201,3 @@ function MatchCard({
     </Card>
   );
 }
-
-function ContactModal({ show, contact, onClose }) {
-  return (
-    <Modal show={show} onHide={onClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Contact Details</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {contact.email && (
-          <Row
-            className="d-flex flex-row justify-content-between h-50"
-            style={{ margin: "5px" }}
-          >
-            <span className="w-75">
-              <strong>Email:</strong> {contact.email}
-            </span>
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                window.location.href = `mailto:${contact.email}`;
-              }}
-              className="ml-2 w-25"
-            >
-              Send Email
-            </Button>
-          </Row>
-        )}
-        {contact.phone && (
-          <Row
-            className="d-flex flex-row justify-content-between h-50"
-            style={{ margin: "5px" }}
-          >
-            <span className="w-75">
-              <strong>Phone:</strong> {contact.phone}
-            </span>
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                navigator.clipboard.writeText(contact.phone);
-              }}
-              className="ml-2 w-25"
-            >
-              Copy Phone
-            </Button>
-          </Row>
-        )}
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-}
-
-export default MatchesPage;

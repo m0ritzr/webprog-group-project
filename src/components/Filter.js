@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from "react";
 import { Form, Button, Accordion, Row, Col } from "react-bootstrap";
-import { useData } from "../dataContext";
+import { useData } from "../context/dataContext";
 import { useParams } from "react-router";
-import { useToasts } from "../ToastContext";
+import { useToasts } from "../context/ToastContext";
 
 function toTitleCase(str) {
   return str

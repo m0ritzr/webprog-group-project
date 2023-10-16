@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap";
-import { auth } from "../firebase";
+import { Button, Form } from "react-bootstrap";
+import { auth } from "../api/firebase";
 import { updatePassword, deleteUser } from "firebase/auth";
-import { useData } from "../dataContext";
+import { useData } from "../context/dataContext";
 
 function AccountSettings() {
   const { setIsLoggedIn } = useData();
@@ -46,7 +46,7 @@ function AccountSettings() {
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label>Retype passwore</Form.Label>
+          <Form.Label>Enter Password Again</Form.Label>
           <Form.Control
             type="password"
             placeholder="Password"

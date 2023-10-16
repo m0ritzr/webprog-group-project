@@ -1,16 +1,22 @@
 import { React, useState } from "react";
-import { Form, Button, Card } from "react-bootstrap";
-import { useData } from "../dataContext";
+import { Form, Button, Card, Dropdown } from "react-bootstrap";
+import { useData } from "../context/dataContext";
 
 export default function Profile() {
-  const { settings, setSettings } = useData();
-  
+  const { settings, setSettings, animalTypesDict } = useData();
+
   const [selectedLocation, setSelectedLocation] = useState(
-    settings.location || "10001",
+    settings.location || "10001"
   );
   const [selectedDistance, setSelectedDistance] = useState(
-    settings.distance || "100",
+    settings.distance || "100"
   );
+
+  const [selectedType, setSelectedType] = useState(settings.type || "");
+
+  const handleTypeChange = (type) => {
+    setSelectedType(type);
+  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -18,9 +24,10 @@ export default function Profile() {
     const changedSettings = { ...settings };
     changedSettings.location = selectedLocation;
     changedSettings.distance = selectedDistance;
+    changedSettings.type = selectedType;
 
     setSettings(changedSettings);
-  }
+  };
 
   return (
     <div className="p-4">
@@ -29,6 +36,29 @@ export default function Profile() {
         <Card.Body>
           <Card.Title>Profile</Card.Title>
           <Form onSubmit={handleFormSubmit}>
+            <Form.Group>
+              <Form.Label>Preferred Animal Type</Form.Label>
+              <Form.Label>
+                You can select one Animal Type at a time. Your preferences for
+                each type will be saved.
+              </Form.Label>
+              <Dropdown>
+                <Dropdown.Toggle variant="secondary" id="dropdown-animal-type">
+                  {selectedType || "Select an animal type"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {Object.keys(animalTypesDict).map((animalType) => (
+                    <Dropdown.Item
+                      key={animalType}
+                      onClick={() => handleTypeChange(animalType)}
+                    >
+                      {animalType}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Form.Group>
+
             <Form.Group>
               <Form.Label>Postal Code</Form.Label>
               <Form.Control
@@ -66,5 +96,3 @@ export default function Profile() {
     </div>
   );
 }
-
-

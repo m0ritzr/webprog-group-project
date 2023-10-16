@@ -1,9 +1,8 @@
 import React from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import LogoutPopup from "./LogoutPopup";
-import { useState } from "react";
-import { useData } from "../dataContext";
+import LogoutPopup from "./popups/LogoutPopup";
+import { useData } from "../context/dataContext";
 
 function Sidebar() {
   const { setShowLogout } = useData();

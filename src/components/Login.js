@@ -1,26 +1,22 @@
 import React, { useState } from "react";
-import { useData } from "../dataContext";
-import {
-  Button,
-  Form,
-  Container,
-  Col,
-  Row,
-  ButtonGroup,
-} from "react-bootstrap";
+import { useData } from "../context/dataContext";
+import { Button, Form, Container } from "react-bootstrap";
 import {
   signInWithEmailAndPassword,
   setPersistence,
   browserSessionPersistence,
 } from "firebase/auth";
-import { auth } from "../firebase";
-import { useToasts } from "../ToastContext";
-import CreateAccountPopup from "./CreateAccountPopup";
+import { auth } from "../api/firebase";
+import { useToasts } from "../context/ToastContext";
+import CreateAccountPopup from "./popups/CreateAccountPopup";
+import ResetPasswordPopup from "./popups/ResetPasswordPopup";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn, setUid, setShowCreateAccount } = useData();
+  const [showCreateAccountPopup, setShowCreateAccountPopup] = useState(false);
+  const [showResetPasswordPopup, setShowResetPasswordPopup] = useState(false);
+  const { setIsLoggedIn, setUid } = useData();
   const { addToast } = useToasts();
 
   const handleLogin = async () => {
@@ -54,45 +50,69 @@ function Login() {
     }
   }
 
-  function handleCreateAccountClick() {
-    setShowCreateAccount(true);
+  function handleCloseCreateAccount() {
+    setShowCreateAccountPopup(false);
+  }
+
+  function handleCloseResetPassword() {
+    setShowResetPasswordPopup(false);
   }
 
   return (
-    <Container className="mt-5">
-      <CreateAccountPopup />
-      <Form>
-        <Form.Group>
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => handleKeyPress(e)}
-          />
-        </Form.Group>
-        <Button className="me-3 mt-3" variant="primary" onClick={handleLogin}>
-          Login
-        </Button>
-        <Button
-          className="mt-3"
-          variant="secondary"
-          onClick={handleCreateAccountClick}
-        >
-          Create account
-        </Button>
-      </Form>
-    </Container>
+    <>
+      {showResetPasswordPopup ? (
+        <ResetPasswordPopup
+          show={showResetPasswordPopup}
+          onClose={handleCloseResetPassword}
+        />
+      ) : null}
+      {showCreateAccountPopup ? (
+        <CreateAccountPopup
+          show={showCreateAccountPopup}
+          onClose={handleCloseCreateAccount}
+        />
+      ) : null}
+      <Container className="mt-5">
+        <Form>
+          <Form.Group>
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => handleKeyPress(e)}
+            />
+          </Form.Group>
+          <Button className="me-3 mt-3" variant="primary" onClick={handleLogin}>
+            Login
+          </Button>
+          <Button
+            className="me-3 mt-3"
+            variant="secondary"
+            onClick={setShowCreateAccountPopup(true)}
+          >
+            Create account
+          </Button>
+          <Button
+            className="me-3 mt-3"
+            variant="secondary"
+            onClick={setShowResetPasswordPopup(true)}
+          >
+            Reset Password
+          </Button>
+        </Form>
+      </Container>
+    </>
   );
 }
 

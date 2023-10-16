@@ -1,18 +1,17 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useData } from "../dataContext";
+import { useData } from "../../context/dataContext";
 import { CloseButton } from "react-bootstrap";
 
-function LogoutPopup() {
-  const { showLogout, setShowLogout, setIsLoggedIn } = useData();
-  const handleClose = () => setShowLogout(false);
+function LogoutPopup(handleClose) {
+  const { setIsLoggedIn } = useData();
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setShowLogout(false);
+    handleClose();
   };
 
   return (
-    <Modal show={showLogout}>
+    <Modal>
       <Modal.Header>
         <Modal.Title>Log out</Modal.Title>
         <CloseButton onClick={handleClose} />
