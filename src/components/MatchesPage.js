@@ -1,17 +1,10 @@
 import { React, useEffect, useState } from "react";
-import { Button, Card, Badge, Image, Row, Col } from "react-bootstrap";
+import { Button, Card, Image, Row, Col } from "react-bootstrap";
 import { useData } from "../context/dataContext";
 import { fetchAnimal } from "../api/petfinder";
 import { useToasts } from "../context/ToastContext";
-import {
-  FaVenusMars,
-  FaPaw,
-  FaBirthdayCake,
-  FaTag,
-  FaMapMarkerAlt,
-  FaRuler,
-} from "react-icons/fa";
 import ContactAnimalPopup from "./popups/ContactAnimalPopup";
+import SimpleBadge from "./subcomponents/SimpleBadge";
 
 export default function MatchesPage() {
   // eslint-disable-next-line no-unused-vars
@@ -39,7 +32,6 @@ export default function MatchesPage() {
 
       await Promise.all(promises);
 
-      console.log(loadedPetsObj);
       setLoadedPetsData(loadedPetsObj);
       setIsLoading(false);
     };
@@ -52,8 +44,6 @@ export default function MatchesPage() {
     const newDeclined = [...declined, petData.id];
     setMatches(newMatches);
     setDeclined(newDeclined);
-
-    console.log("Unmatched with", petData.name);
 
     addToast({
       id: `match-removed-${petData.id}`,
@@ -145,55 +135,35 @@ function MatchCard({
 
         <Row>
           <Col className="d-flex flex-column align-items-left mb-2">
-            <Badge variant="dark" className="mb-2">
-              <FaPaw
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
+            {petData.species ? (
+              <SimpleBadge
+                property={`${petData.species} - ${petData.breeds.primary}`}
+                icon="species"
               />
-              {petData.species} - {petData.breeds.primary}
-            </Badge>
-            <Badge variant="dark">
-              <FaRuler
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
-              />
-              {petData.size}
-            </Badge>
+            ) : null}
+            {petData.size ? (
+              <SimpleBadge property={petData.size} icon="size" />
+            ) : null}
           </Col>
 
           <Col className="d-flex flex-column align-items-left mb-2">
-            <Badge variant="dark" className="mb-2">
-              <FaBirthdayCake
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
+            {petData.age ? (
+              <SimpleBadge property={petData.age} icon="age" />
+            ) : null}
+            {petData.contact ? (
+              <SimpleBadge
+                property={`${petData.contact.address.city}, ${petData.contact.address.state}`}
+                icon="address"
               />
-              {petData.age}
-            </Badge>
-            <Badge variant="dark">
-              <FaMapMarkerAlt
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
-              />
-              {petData.contact.address.city}, {petData.contact.address.state}
-            </Badge>
+            ) : null}
           </Col>
 
           <Col className="d-flex flex-column align-items-left mb-2">
-            <Badge variant="dark" className="mb-2">
-              <FaVenusMars
-                style={{ color: "white", marginRight: "5px" }}
-                className="mr-1"
-              />
-              {petData.gender}
-            </Badge>
+            {petData.gender ? (
+              <SimpleBadge property={petData.gender} icon="gender" />
+            ) : null}
             {petData.tags.length ? (
-              <Badge variant="dark">
-                <FaTag
-                  style={{ color: "white", marginRight: "5px" }}
-                  className="mr-1"
-                />
-                {petData.tags.join(", ")}
-              </Badge>
+              <SimpleBadge property={petData.tags.join(", ")} icon="tags" />
             ) : null}
           </Col>
         </Row>

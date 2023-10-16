@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import { useData } from "../context/dataContext";
 import { fetchAnimals } from "../api/petfinder";
 import { useEffect } from "react";
@@ -27,29 +27,24 @@ function LikePage() {
     () => ({ type: settings.type, ...settings[settings.type] }),
     [settings]
   );
-  //console.log("settings for type:", settingsForType);
-  console.log("matches: ", matches);
-  console.log("loaded pets: ", pets);
-  console.log("current page: ", currentPage);
-
-  async function fetchMorePets() {
-    const response = await fetchAnimals({
-      ...settingsForType,
-      page: currentPage,
-    });
-    console.log("fetched animals", response.animals);
-    setPets([...pets, ...response.animals]);
-    setCurrentPage(currentPage + 1);
-  }
 
   // Fetches more animals if needed when pets is updated changes
   // Also called on first render
   useEffect(() => {
+    async function fetchMorePets() {
+      const response = await fetchAnimals({
+        ...settingsForType,
+        page: currentPage,
+      });
+      setPets([...pets, ...response.animals]);
+      setCurrentPage(currentPage + 1);
+    }
+
     pets.length ? setIsLoading(false) : setIsLoading(true);
     if (pets.length < LIST_MIN) {
       fetchMorePets();
     }
-  }, [pets]);
+  }, [pets, currentPage, settingsForType]);
 
   function handleLikeClick() {
     if (pets.length) {
@@ -68,18 +63,18 @@ function LikePage() {
     <div className="container-sm p-3">
       <h2>Like Pets</h2>
 
-      <Card style={{ height: "90vh", maxWidth: "50vw" }}>
+      <Card style={{ height: "90vh", maxWidth: "40vw" }}>
         {isLoading ? (
           <Spinner animation="border" role="status"></Spinner>
         ) : (
           <Card.Img
-            className="w-100 h-75 object-fit-cover"
+            className="w-100 h-50 object-fit-cover"
             variant="top"
             src={pets[0]?.photos[0]?.large || "./tmpimgs/no_image.jpg"}
           />
         )}
 
-        <Card.Body className="h-25">
+        <Card.Body className="h-50">
           <Card.Title>
             {isLoading ? "Loading..." : pets[0]?.name || "Pet name missing"}
           </Card.Title>
@@ -121,12 +116,13 @@ function LikePage() {
               ) : null}
             </Col>
           </Row>
-          <div className="col">
+          <Row className="mt-20">
             <Button
               variant="success"
               size="lg"
               onClick={handleLikeClick}
               disabled={isLoading}
+              className="mb-2"
             >
               Like
             </Button>
@@ -138,7 +134,7 @@ function LikePage() {
             >
               Dislike
             </Button>
-          </div>
+          </Row>
         </Card.Body>
       </Card>
     </div>

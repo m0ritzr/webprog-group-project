@@ -1,6 +1,7 @@
 import { React, useState } from "react";
 import { Form, Button, Card, Dropdown } from "react-bootstrap";
 import { useData } from "../context/dataContext";
+import { useToasts } from "../context/ToastContext";
 
 export default function Profile() {
   const { settings, setSettings, animalTypesDict } = useData();
@@ -13,6 +14,8 @@ export default function Profile() {
   );
 
   const [selectedType, setSelectedType] = useState(settings.type || "");
+
+  const { addToast } = useToasts();
 
   const handleTypeChange = (type) => {
     setSelectedType(type);
@@ -27,6 +30,13 @@ export default function Profile() {
     changedSettings.type = selectedType;
 
     setSettings(changedSettings);
+
+    addToast({
+      id: `profile-updated-${Date.now()}`,
+      title: `Profile updated`,
+      message: `Successfully updated profile settings.`,
+      type: "alert-success",
+    });
   };
 
   return (
@@ -38,10 +48,6 @@ export default function Profile() {
           <Form onSubmit={handleFormSubmit}>
             <Form.Group>
               <Form.Label>Preferred Animal Type</Form.Label>
-              <Form.Label>
-                You can select one Animal Type at a time. Your preferences for
-                each type will be saved.
-              </Form.Label>
               <Dropdown>
                 <Dropdown.Toggle variant="secondary" id="dropdown-animal-type">
                   {selectedType || "Select an animal type"}
@@ -57,9 +63,13 @@ export default function Profile() {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
+              <Form.Text muted>
+                You can select one Animal Type at a time. Your preferences for
+                each type will be saved.
+              </Form.Text>
             </Form.Group>
 
-            <Form.Group>
+            <Form.Group className="mt-3">
               <Form.Label>Postal Code</Form.Label>
               <Form.Control
                 type="text"
@@ -71,7 +81,7 @@ export default function Profile() {
               />
             </Form.Group>
 
-            <Form.Group>
+            <Form.Group className="mt-3">
               <Form.Label>Distance: max {selectedDistance} miles</Form.Label>
               <Form.Control
                 type="range"
@@ -83,7 +93,7 @@ export default function Profile() {
                 onChange={(e) => setSelectedDistance(e.target.value)}
               />
               <Form.Text className="text-muted">
-                Slide to adjust the distadnce range.
+                Slide to adjust the distance range.
               </Form.Text>
             </Form.Group>
 

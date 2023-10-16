@@ -99,14 +99,14 @@ function Login() {
           <Button
             className="me-3 mt-3"
             variant="secondary"
-            onClick={setShowCreateAccountPopup(true)}
+            onClick={(e) => setShowCreateAccountPopup(true)}
           >
             Create account
           </Button>
           <Button
             className="me-3 mt-3"
             variant="secondary"
-            onClick={setShowResetPasswordPopup(true)}
+            onClick={(e) => setShowResetPasswordPopup(true)}
           >
             Reset Password
           </Button>
