@@ -15,7 +15,7 @@ function Sidebar() {
       <ButtonGroup vertical>
         <LinkContainer to="/settings">
           <Button variant="outline-primary" className="mb-2">
-            Filter/Settings
+            Profile/Filters
           </Button>
         </LinkContainer>
         <LinkContainer to="/like">
@@ -26,6 +26,11 @@ function Sidebar() {
         <LinkContainer to="/matches">
           <Button variant="outline-primary" className="mb-2">
             My Matches
+          </Button>
+        </LinkContainer>
+        <LinkContainer to="/account-settings">
+          <Button variant="outline-primary" className="mb-2">
+            Account Settings
           </Button>
         </LinkContainer>
         <Button
