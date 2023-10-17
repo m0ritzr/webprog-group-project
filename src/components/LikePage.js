@@ -7,9 +7,7 @@ import { useEffect } from "react";
 import SimpleBadge from "./subcomponents/SimpleBadge";
 
 // TODO
-// Format description, (&amp; etc...)
 // The description isn't the full description?
-// Add padding between badges
 
 // Add check for duplicate matches/declines, also in a way that limits api calls...
 // Figure out how to deal with animals without pictures while limiting the api calls...
@@ -20,7 +18,7 @@ function LikePage() {
 
   const [pets, setPets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true); // change to true
+  const [isLoading, setIsLoading] = useState(true);
   const LIST_MIN = 10;
 
   const settingsForType = React.useMemo(
@@ -28,8 +26,6 @@ function LikePage() {
     [settings]
   );
 
-  // Fetches more animals if needed when pets is updated changes
-  // Also called on first render
   useEffect(() => {
     async function fetchMorePets() {
       const response = await fetchAnimals({
@@ -48,7 +44,9 @@ function LikePage() {
 
   function handleLikeClick() {
     if (pets.length) {
-      setMatches([...matches, pets[0].id]);
+      if (!matches.includes(pets[0].id)) {
+        setMatches([...matches, pets[0].id]);
+      }
       setPets(pets.slice(1));
     }
   }
@@ -57,6 +55,21 @@ function LikePage() {
       setDeclined([...declined, pets[0].id]);
       setPets(pets.slice(1));
     }
+  }
+
+  function petDesciption() {
+    if (pets[0]?.description) {
+      // Needs to run the decode twice.
+      let tmp = decodeHTMLEntities(pets[0].description);
+      return decodeHTMLEntities(tmp);
+    } else {
+      return "Description missing";
+    }
+  }
+
+  function decodeHTMLEntities(text) {
+    var txt = new DOMParser().parseFromString(text, "text/html");
+    return txt.documentElement.textContent;
   }
 
   return (
@@ -78,11 +91,7 @@ function LikePage() {
           <Card.Title>
             {isLoading ? "Loading..." : pets[0]?.name || "Pet name missing"}
           </Card.Title>
-          <Card.Text>
-            {isLoading
-              ? "Loading..."
-              : pets[0]?.description || "Description missing"}
-          </Card.Text>
+          <Card.Text>{isLoading ? "Loading..." : petDesciption()}</Card.Text>
           {/** add padding between tags */}
           <Row>
             <Col>
