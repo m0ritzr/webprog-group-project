@@ -129,9 +129,7 @@ function MatchCard({
           </Col>
         </Row>
 
-        <Card.Text className="mb-3 h-25">
-          <p className="h-100">{petData.description}</p>
-        </Card.Text>
+        <Card.Text className="mb-3 h-25">{petData.description}</Card.Text>
 
         <Row>
           <Col className="d-flex flex-column align-items-left mb-2">
